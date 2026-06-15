@@ -373,14 +373,34 @@ html,body{overflow-x:hidden;max-width:100vw}
 <div class="page" id="page-vendas">
   <div class="card">
     <div class="card-title"><span>🛍️</span> Registrar venda</div>
+
+    <!-- Filtros em cascata -->
+    <label>Categoria</label>
+    <div class="filter-row" id="venda-filtros-cat" style="margin-bottom:10px"></div>
+
+    <div id="venda-filtro-tam-wrap">
+      <label>Tamanho</label>
+      <div class="filter-row" id="venda-filtros-tam" style="margin-bottom:10px"></div>
+    </div>
+
+    <div id="venda-filtro-cor-wrap">
+      <label>Cor</label>
+      <div class="filter-row" id="venda-filtros-cor" style="margin-bottom:10px"></div>
+    </div>
+
+    <!-- Produto filtrado -->
     <label>Produto</label>
-    <select id="venda-produto" onchange="preencherVenda()"><option value="">Selecionar do estoque...</option></select>
+    <select id="venda-produto" onchange="preencherVenda()">
+      <option value="">Selecionar...</option>
+    </select>
+
     <div class="form-row">
       <div><label>Quantidade</label><input id="venda-qty" type="number" min="1" value="1"></div>
       <div><label>Preço unit. (R$)</label><input id="venda-preco" type="number" min="0" step="0.01" placeholder="0,00"></div>
     </div>
     <button class="btn btn-primary" onclick="registrarVenda()">✔ Confirmar venda</button>
   </div>
+
   <div class="card-title" style="padding:0 4px 8px;font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:var(--cinza)">Vendas do evento</div>
   <div id="lista-vendas"><div class="empty"><div class="ei">🤠</div><p>Nenhuma venda registrada.</p></div></div>
 </div>
@@ -917,14 +937,86 @@ async function ajustarQty(id,delta) {
 }
 
 // ── VENDAS ──
-function populateVendaProduto() {
-  const sel=document.getElementById('venda-produto');
-  sel.innerHTML='<option value="">Selecionar do estoque...</option>'+
-    state.estoque.filter(i=>i.quantidade>0).map(i=>`<option value="${i.id}">${i.nome}${i.tamanho?' · '+i.tamanho:''}${i.cor?' · '+i.cor:''}${i.edicao?' · '+i.edicao:''} (${i.quantidade} un.)</option>`).join('');
+let vendaFiltroCat = 'Todos';
+let vendaFiltroTam = 'Todos';
+let vendaFiltroCor = 'Todos';
+
+function setVendaFiltroCat(v) { vendaFiltroCat=v; vendaFiltroTam='Todos'; vendaFiltroCor='Todos'; renderVendaFiltros(); }
+function setVendaFiltroTam(v) { vendaFiltroTam=v; vendaFiltroCor='Todos'; renderVendaFiltros(); }
+function setVendaFiltroCor(v) { vendaFiltroCor=v; renderVendaFiltros(); }
+
+function renderVendaFiltros() {
+  const disponiveis = state.estoque.filter(i => i.quantidade > 0);
+
+  // Categorias
+  const cats = ['Todos', ...new Set(disponiveis.map(i => i.categoria))];
+  document.getElementById('venda-filtros-cat').innerHTML = cats.map(c =>
+    `<div class="filter-chip ${c===vendaFiltroCat?'active':''}" onclick="setVendaFiltroCat('${c}')">${c}</div>`
+  ).join('');
+
+  // Filtrar por categoria
+  let filtrados = disponiveis;
+  if (vendaFiltroCat !== 'Todos') filtrados = filtrados.filter(i => i.categoria === vendaFiltroCat);
+
+  // Tamanhos
+  const tamanhos = ['Todos', ...new Set(filtrados.map(i => i.tamanho||'').filter(Boolean))].sort((a,b) => {
+    const order = ['PP','P','M','G','GG','GGG','Único'];
+    return (order.indexOf(a)===-1?99:order.indexOf(a)) - (order.indexOf(b)===-1?99:order.indexOf(b));
+  });
+  const tamWrap = document.getElementById('venda-filtro-tam-wrap');
+  if (tamanhos.length > 1) {
+    tamWrap.style.display = '';
+    document.getElementById('venda-filtros-tam').innerHTML = tamanhos.map(t =>
+      `<div class="filter-chip ${t===vendaFiltroTam?'active':''}" onclick="setVendaFiltroTam('${t}')">${t}</div>`
+    ).join('');
+  } else {
+    tamWrap.style.display = 'none';
+    vendaFiltroTam = 'Todos';
+  }
+
+  // Filtrar por tamanho
+  if (vendaFiltroTam !== 'Todos') filtrados = filtrados.filter(i => (i.tamanho||'') === vendaFiltroTam);
+
+  // Cores
+  const cores = ['Todos', ...new Set(filtrados.map(i => i.cor||i.edicao||'').filter(Boolean))];
+  const corWrap = document.getElementById('venda-filtro-cor-wrap');
+  if (cores.length > 1) {
+    corWrap.style.display = '';
+    document.getElementById('venda-filtros-cor').innerHTML = cores.map(c =>
+      `<div class="filter-chip ${c===vendaFiltroCor?'active':''}" onclick="setVendaFiltroCor('${encodeURIComponent(c)}')">${c}</div>`
+    ).join('');
+  } else {
+    corWrap.style.display = 'none';
+    vendaFiltroCor = 'Todos';
+  }
+
+  // Filtrar por cor
+  if (vendaFiltroCor !== 'Todos') {
+    const fc = decodeURIComponent(vendaFiltroCor);
+    filtrados = filtrados.filter(i => (i.cor||i.edicao||'') === fc);
+  }
+
+  // Popular select de produto
+  const sel = document.getElementById('venda-produto');
+  const valorAtual = sel.value;
+  sel.innerHTML = '<option value="">Selecionar...</option>' +
+    filtrados.map(i =>
+      `<option value="${i.id}">${i.nome}${i.tamanho?' · '+i.tamanho:''}${i.cor?' · '+i.cor:''}${i.edicao?' · '+i.edicao:''} (${i.quantidade} un.)</option>`
+    ).join('');
+  // Manter seleção se ainda disponível
+  if (valorAtual) sel.value = valorAtual;
 }
+
+function populateVendaProduto() {
+  vendaFiltroCat = 'Todos';
+  vendaFiltroTam = 'Todos';
+  vendaFiltroCor = 'Todos';
+  renderVendaFiltros();
+}
+
 function preencherVenda() {
-  const item=state.estoque.find(i=>i.id===parseInt(document.getElementById('venda-produto').value));
-  if (item&&item.preco) document.getElementById('venda-preco').value=item.preco.toFixed(2);
+  const item = state.estoque.find(i => i.id === parseInt(document.getElementById('venda-produto').value));
+  if (item && item.preco) document.getElementById('venda-preco').value = item.preco.toFixed(2);
 }
 async function registrarVenda() {
   const id=parseInt(document.getElementById('venda-produto').value);
