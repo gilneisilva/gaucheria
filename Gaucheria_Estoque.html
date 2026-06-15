@@ -467,6 +467,13 @@ const BIN_ID_KEY     = 'gaucheria_bin_id';
 // BIN_ID compartilhado — fixo após primeira criação
 let BIN_ID = localStorage.getItem(BIN_ID_KEY) || '6a305a4df5f4af5e29f75c13';
 
+function setSyncStatus(status) {
+  const dot = document.getElementById('sync-dot');
+  if (!dot) return;
+  dot.className = 'sync-dot ' + status;
+  dot.title = status === 'ok' ? 'Sincronizado ✓' : status === 'loading' ? 'Sincronizando...' : 'Erro de sincronização';
+}
+
 async function cloudLoad() {
   setSyncStatus('loading');
   console.log('Carregando do JSONBin, BIN_ID:', BIN_ID);
@@ -536,8 +543,9 @@ async function cloudSave(data) {
     }
     setSyncStatus('ok');
   } catch(e) {
-    console.warn('JSONBin save falhou:', e.message);
+    console.error('JSONBin save ERRO:', e.message);
     setSyncStatus('err');
+    throw e; // Propagar erro para confirmarImport mostrar
   }
 }
 
@@ -759,16 +767,28 @@ function parseCSV(text) {
   document.getElementById('import-preview').style.display='';
 }
 async function confirmarImport() {
-  const validos=importPreview.filter(r=>!r.erro);
+  const validos = importPreview.filter(r => !r.erro);
   if (!validos.length) { toast('Nenhuma linha válida'); return; }
-  validos.forEach(r=>adicionarOuSomar(r));
-  await save();
-  renderEntradaHistorico();
-  document.getElementById('import-preview').style.display='none';
-  document.getElementById('file-input').value='';
-  importPreview=[];
-  toast(`✅ ${validos.length} produto(s) importado(s)!`,3000);
-  showTab('estoque');
+  
+  toast('⏳ Importando...', 1000);
+  validos.forEach(r => adicionarOuSomar(r));
+  
+  console.log('Estoque após import:', state.estoque.length, 'itens');
+  
+  // Salvar com feedback visual
+  try {
+    await save();
+    console.log('Save concluído com sucesso');
+    renderEntradaHistorico();
+    document.getElementById('import-preview').style.display = 'none';
+    document.getElementById('file-input').value = '';
+    importPreview = [];
+    toast(`✅ ${validos.length} produto(s) importado(s) e sincronizados!`, 3000);
+    showTab('estoque');
+  } catch(e) {
+    console.error('Erro ao salvar:', e);
+    toast('❌ Erro ao salvar: ' + e.message, 4000);
+  }
 }
 function cancelarImport() { importPreview=[]; document.getElementById('import-preview').style.display='none'; document.getElementById('file-input').value=''; }
 
