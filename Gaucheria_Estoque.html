@@ -514,13 +514,48 @@ html,body{overflow-x:hidden;max-width:100vw}
 <div class="modal-overlay" id="modal-evento">
   <div class="modal">
     <h2>📍 Evento</h2>
-    <label>Nome do evento atual</label>
+
+    <!-- Novo evento -->
+    <label>Nome do evento</label>
     <input id="modal-evento-nome" type="text" placeholder="Ex: Festa Farroupilha 2025" style="margin-bottom:8px">
-    <div class="modal-btns" style="margin-bottom:12px">
+    <div class="modal-btns" style="margin-bottom:14px">
       <button class="btn btn-primary" style="flex:1" onclick="salvarEvento()">✔ Salvar</button>
       <button class="btn" style="background:var(--cinza-cl);flex:1" onclick="closeEventModal()">Cancelar</button>
     </div>
-    <div id="modal-eventos-lista" style="max-height:180px;overflow-y:auto"></div>
+
+    <!-- Histórico de eventos -->
+    <div id="modal-eventos-lista" style="max-height:220px;overflow-y:auto"></div>
+  </div>
+</div>
+
+<!-- MODAL EDITAR NOME DO EVENTO -->
+<div class="modal-overlay" id="modal-editar-evento">
+  <div class="modal">
+    <h2>✏️ Editar evento</h2>
+    <input type="hidden" id="edit-evento-original">
+    <label>Novo nome</label>
+    <input id="edit-evento-nome" type="text" placeholder="Nome do evento">
+    <div class="modal-btns">
+      <button class="btn btn-primary" style="flex:1" onclick="confirmarEditarEvento()">✔ Salvar</button>
+      <button class="btn" style="background:var(--cinza-cl);flex:1" onclick="document.getElementById('modal-editar-evento').classList.remove('open')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDITAR VENDA -->
+<div class="modal-overlay" id="modal-editar-venda">
+  <div class="modal">
+    <h2>✏️ Editar venda</h2>
+    <input type="hidden" id="edit-venda-id">
+    <label>Quantidade</label>
+    <input id="edit-venda-qty" type="number" min="1" value="1">
+    <label>Preço unit. (R$)</label>
+    <input id="edit-venda-preco" type="number" min="0" step="0.01">
+    <div class="modal-btns">
+      <button class="btn btn-primary" style="flex:1" onclick="confirmarEditarVenda()">✔ Salvar</button>
+      <button class="btn btn-danger" style="flex:1" onclick="confirmarExcluirVenda()">🗑 Excluir</button>
+    </div>
+    <button class="btn" style="background:var(--cinza-cl);margin-top:8px;width:100%" onclick="document.getElementById('modal-editar-venda').classList.remove('open')">Cancelar</button>
   </div>
 </div>
 
@@ -692,31 +727,72 @@ function showTab(name) {
 // ── EVENTO ──
 function openEventModal() {
   document.getElementById('modal-evento-nome').value = state.evento;
-  // Mostrar histórico de eventos
-  const lista = document.getElementById('modal-eventos-lista');
-  if (state.eventos && state.eventos.length > 0) {
-    lista.innerHTML = `
-      <div style="font-size:11px;font-weight:700;color:var(--cinza);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Eventos anteriores</div>
-      ${state.eventos.slice().reverse().map(e => `
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:var(--fundo);border-radius:7px;margin-bottom:5px;font-size:13px">
-          <span style="font-weight:600">${e.nome}</span>
-          <div style="display:flex;gap:6px">
-            <button onclick="selecionarEvento('${e.nome.replace(/'/g,"'")}'); return false" style="font-size:11px;color:var(--azul);background:none;border:none;cursor:pointer;font-weight:700">Usar</button>
-          </div>
-        </div>`).join('')}`;
-  } else {
-    lista.innerHTML = '';
-  }
+  renderEventosLista();
   document.getElementById('modal-evento').classList.add('open');
 }
+
+function renderEventosLista() {
+  const lista = document.getElementById('modal-eventos-lista');
+  if (!state.eventos || state.eventos.length === 0) { lista.innerHTML = ''; return; }
+  lista.innerHTML = `
+    <div style="font-size:11px;font-weight:700;color:var(--cinza);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Eventos cadastrados</div>
+    ${state.eventos.slice().reverse().map(e => `
+      <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--fundo);border-radius:7px;margin-bottom:5px">
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:600">${e.nome}</div>
+          <div style="font-size:11px;color:var(--cinza)">${e.data||''}</div>
+        </div>
+        <button onclick="selecionarEvento('${e.nome.replace(/'/g,"\'")}'); return false"
+          style="font-size:11px;color:var(--azul);background:none;border:none;cursor:pointer;font-weight:700;padding:4px 8px;border-radius:5px;white-space:nowrap">
+          ▶ Usar
+        </button>
+        <button onclick="abrirEditarEvento('${e.nome.replace(/'/g,"\'")}'); return false"
+          style="font-size:11px;color:var(--cinza);background:none;border:1px solid var(--cinza-cl);cursor:pointer;font-weight:700;padding:4px 8px;border-radius:5px">
+          ✏️
+        </button>
+      </div>`).join('')}`;
+}
+
 function selecionarEvento(nome) {
   document.getElementById('modal-evento-nome').value = nome;
 }
+
+function abrirEditarEvento(nome) {
+  document.getElementById('edit-evento-original').value = nome;
+  document.getElementById('edit-evento-nome').value = nome;
+  document.getElementById('modal-editar-evento').classList.add('open');
+}
+
+async function confirmarEditarEvento() {
+  const original = document.getElementById('edit-evento-original').value;
+  const novo = document.getElementById('edit-evento-nome').value.trim();
+  if (!novo) { toast('Informe o novo nome'); return; }
+
+  // Atualizar no histórico
+  const idx = state.eventos.findIndex(e => e.nome === original);
+  if (idx !== -1) state.eventos[idx].nome = novo;
+
+  // Atualizar em todas as vendas e saídas
+  state.vendas.forEach(v => { if (v.evento === original) v.evento = novo; });
+  (state.saidas||[]).forEach(s => { if (s.evento === original) s.evento = novo; });
+
+  // Se era o evento atual, atualizar
+  if (state.evento === original) {
+    state.evento = novo;
+    document.getElementById('eventName').textContent = novo;
+  }
+
+  await save();
+  document.getElementById('modal-editar-evento').classList.remove('open');
+  renderEventosLista();
+  toast('Evento renomeado para: ' + novo);
+}
+
 function closeEventModal() { document.getElementById('modal-evento').classList.remove('open'); }
+
 async function salvarEvento() {
   const nome = document.getElementById('modal-evento-nome').value.trim();
   if (!nome) { toast('Informe o nome do evento'); return; }
-  // Salvar no histórico se for novo
   if (!state.eventos) state.eventos = [];
   if (!state.eventos.find(e => e.nome === nome)) {
     state.eventos.push({ nome, data: new Date().toLocaleDateString('pt-BR') });
@@ -1111,14 +1187,74 @@ async function registrarVenda() {
   renderVendas(); populateVendaProduto();
 }
 function renderVendas() {
-  const el=document.getElementById('lista-vendas');
-  const vendas=[...state.vendas].reverse();
+  const el = document.getElementById('lista-vendas');
+  const vendas = [...state.vendas].reverse();
   if (!vendas.length) { el.innerHTML='<div class="empty"><div class="ei">🤠</div><p>Nenhuma venda registrada.</p></div>'; return; }
-  el.innerHTML=`<div class="stock-list">${vendas.map(v=>`
+  el.innerHTML = `<div class="stock-list">${vendas.map(v => `
     <div class="stock-item">
-      <div class="item-info"><div class="item-name">${v.nome}</div><div class="item-meta">${vendaMeta(v)}</div></div>
-      <div style="font-size:15px;font-weight:700;color:var(--azul-dk);white-space:nowrap">R$ ${v.total.toFixed(2)}</div>
+      <div class="item-info">
+        <div class="item-name">${v.nome}</div>
+        <div class="item-meta">${vendaMeta(v)}</div>
+        <div style="font-size:10px;color:var(--cinza);margin-top:2px">📅 ${v.evento||'Sem evento'}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+        <div style="font-size:15px;font-weight:700;color:var(--azul-dk);white-space:nowrap">R$ ${v.total.toFixed(2)}</div>
+        <button onclick="abrirEditarVenda(${v.id})"
+          style="font-size:10px;color:var(--cinza);background:none;border:1px solid var(--cinza-cl);border-radius:5px;cursor:pointer;padding:2px 7px;font-weight:600">
+          ✏️ Editar
+        </button>
+      </div>
     </div>`).join('')}</div>`;
+}
+
+function abrirEditarVenda(id) {
+  const v = state.vendas.find(v => v.id === id);
+  if (!v) return;
+  document.getElementById('edit-venda-id').value = id;
+  document.getElementById('edit-venda-qty').value = v.quantidade;
+  document.getElementById('edit-venda-preco').value = v.preco.toFixed(2);
+  document.getElementById('modal-editar-venda').classList.add('open');
+}
+
+async function confirmarEditarVenda() {
+  const id    = parseInt(document.getElementById('edit-venda-id').value);
+  const qty   = parseInt(document.getElementById('edit-venda-qty').value) || 0;
+  const preco = parseFloat(document.getElementById('edit-venda-preco').value) || 0;
+  const venda = state.vendas.find(v => v.id === id);
+  if (!venda || qty < 1) { toast('Dados inválidos'); return; }
+
+  // Devolver diferença ao estoque
+  const item = state.estoque.find(i => i.id === venda.itemId);
+  if (item) item.quantidade += venda.quantidade - qty;
+
+  venda.quantidade = qty;
+  venda.preco = preco;
+  venda.total = qty * preco;
+  venda.totalCusto = qty * (getCusto(venda.nome)||0);
+
+  await save();
+  document.getElementById('modal-editar-venda').classList.remove('open');
+  renderVendas();
+  populateVendaProduto();
+  toast('Venda atualizada!');
+}
+
+async function confirmarExcluirVenda() {
+  if (!confirm('Excluir esta venda? O produto voltará ao estoque.')) return;
+  const id = parseInt(document.getElementById('edit-venda-id').value);
+  const venda = state.vendas.find(v => v.id === id);
+  if (!venda) return;
+
+  // Devolver ao estoque
+  const item = state.estoque.find(i => i.id === venda.itemId);
+  if (item) item.quantidade += venda.quantidade;
+
+  state.vendas = state.vendas.filter(v => v.id !== id);
+  await save();
+  document.getElementById('modal-editar-venda').classList.remove('open');
+  renderVendas();
+  populateVendaProduto();
+  toast('Venda excluída — produto devolvido ao estoque.');
 }
 
 
