@@ -469,12 +469,12 @@ let BIN_ID = localStorage.getItem(BIN_ID_KEY) || '6a305a4df5f4af5e29f75c13';
 
 async function cloudLoad() {
   setSyncStatus('loading');
+  console.log('Carregando do JSONBin, BIN_ID:', BIN_ID);
   if (!BIN_ID) { setSyncStatus('ok'); return null; }
   try {
     const resp = await fetch(`${JSONBIN_API}/${BIN_ID}/latest`, {
       headers: {
         'X-Master-Key': JSONBIN_MASTER,
-        'X-Access-Key': JSONBIN_ACCESS,
         'X-Bin-Meta': 'false'
       }
     });
@@ -503,6 +503,7 @@ async function cloudLoad() {
 async function cloudSave(data) {
   try { localStorage.setItem('gaucheria_estoque_v1', JSON.stringify(data)); } catch(_) {}
   setSyncStatus('loading');
+  console.log('Salvando no JSONBin, BIN_ID:', BIN_ID);
   try {
     if (!BIN_ID) {
       // Criar bin na primeira vez
@@ -511,7 +512,6 @@ async function cloudSave(data) {
         headers: {
           'Content-Type': 'application/json',
           'X-Master-Key': JSONBIN_MASTER,
-          'X-Access-Key': JSONBIN_ACCESS,
           'X-Bin-Name': 'gaucheria-estoque',
           'X-Bin-Private': 'false',
           'X-Bin-Meta': 'false'
@@ -528,8 +528,7 @@ async function cloudSave(data) {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'X-Master-Key': JSONBIN_MASTER,
-          'X-Access-Key': JSONBIN_ACCESS
+          'X-Master-Key': JSONBIN_MASTER
         },
         body: JSON.stringify(data)
       });
