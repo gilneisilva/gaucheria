@@ -275,12 +275,25 @@ html,body{overflow-x:hidden;max-width:100vw}
     <label>Categoria</label>
     <select id="ent-cat" onchange="atualizarCampos()">
       <option value="">Selecionar...</option>
-      <option>Camiseta</option><option>Camiseta Algodão Peruano</option>
-      <option>Camiseta Oversized</option><option>Camiseta Infantil</option>
-      <option>Regata</option><option>Cropped</option>
-      <option>Body Infantil</option><option>Suéter Moletom</option>
-      <option>Cropped Moletom</option><option>Hoodie Moletom</option>
-      <option>Moeda Colecionável</option><option>Outro</option>
+      <optgroup label="── Camisetas ──">
+        <option>Camiseta Masculino</option>
+        <option>Camiseta Feminino</option>
+        <option>Camiseta Algod. Peruano</option>
+        <option>Camiseta Oversized</option>
+        <option>Camiseta Infantil</option>
+      </optgroup>
+      <optgroup label="── Moletons ──">
+        <option>Hoodie Moletom</option>
+        <option>Suéter Moletom</option>
+        <option>Cropped Moletom</option>
+      </optgroup>
+      <optgroup label="── Outros ──">
+        <option>Body Infantil</option>
+        <option>Regata</option>
+        <option>Cropped</option>
+        <option>Moeda Colecionável</option>
+        <option>Outro</option>
+      </optgroup>
     </select>
     <label>Nome / Modelo</label>
     <input id="ent-nome" type="text" placeholder="Ex: Lobisquera Edição 1">
@@ -662,21 +675,34 @@ let importPreview = [];
 
 // custo = plano INKrível (Reserva INK)
 const TABELA = [
-  {nome:'Camiseta',                 preco:102.90, custo:49.90},
-  {nome:'Camiseta Algodão Peruano', preco:119.00, custo:65.00},
-  {nome:'Camiseta Oversized',       preco:129.00, custo:75.00},
-  {nome:'Camiseta Infantil',        preco:96.00,  custo:46.00},
-  {nome:'Regata',                   preco:96.00,  custo:46.00},
-  {nome:'Cropped',                  preco:94.00,  custo:44.00},
-  {nome:'Body Infantil',            preco:96.00,  custo:46.00},
-  {nome:'Suéter Moletom',           preco:189.00, custo:99.00},
-  {nome:'Cropped Moletom',          preco:159.00, custo:109.00},
-  {nome:'Hoodie Moletom',           preco:199.00, custo:119.00},
-  {nome:'Moeda Colecionável',       preco:null,   custo:null},
+  // Camiseta — Masculino e Feminino têm mesmo preço/custo
+  {nome:'Camiseta Masculino',      preco:102.90, custo:49.90},
+  {nome:'Camiseta Feminino',       preco:102.90, custo:49.90},
+  {nome:'Camiseta Algod. Peruano', preco:119.00, custo:65.00},
+  {nome:'Camiseta Oversized',      preco:129.00, custo:75.00},
+  {nome:'Camiseta Infantil',       preco:96.00,  custo:46.00},
+  {nome:'Body Infantil',           preco:96.00,  custo:46.00},
+  {nome:'Regata',                  preco:96.00,  custo:46.00},
+  {nome:'Cropped',                 preco:94.00,  custo:44.00},
+  {nome:'Cropped Moletom',         preco:159.00, custo:109.00},
+  {nome:'Hoodie Moletom',          preco:199.00, custo:119.00},
+  {nome:'Suéter Moletom',          preco:189.00, custo:99.00},
+  {nome:'Moeda Colecionável',      preco:null,   custo:null},
 ];
 function getCusto(nome) {
-  const p = TABELA.find(t => t.nome.toLowerCase() === (nome||'').toLowerCase());
+  const n = (nome||'').toLowerCase();
+  // Busca exata primeiro
+  let p = TABELA.find(t => t.nome.toLowerCase() === n);
+  // Se não achar, busca parcial
+  if (!p) p = TABELA.find(t => n.includes(t.nome.toLowerCase()) || t.nome.toLowerCase().includes(n));
   return p ? p.custo : null;
+}
+
+function getPreco(nome) {
+  const n = (nome||'').toLowerCase();
+  let p = TABELA.find(t => t.nome.toLowerCase() === n);
+  if (!p) p = TABELA.find(t => n.includes(t.nome.toLowerCase()) || t.nome.toLowerCase().includes(n));
+  return p ? p.preco : null;
 }
 
 async function save() {
@@ -1389,11 +1415,28 @@ function renderSaidas() {
 
 function renderPrecos() {
   const moeda = state.estoque.find(i=>i.categoria==='Moeda Colecionável'&&i.preco>0);
-  document.getElementById('price-list').innerHTML = TABELA.map((p,i) => {
-    const preco = p.nome==='Moeda Colecionável' ? (moeda?moeda.preco:null) : p.preco;
+
+  // Tabela para exibição ao cliente — sem duplicatas, usando campo display
+  const TABELA_DISPLAY = [
+    {display:'Camiseta (Fem e Masc)',    preco:102.90},
+    {display:'Camiseta Algod. Peruano',  preco:119.00},
+    {display:'Camiseta Oversized',       preco:129.00},
+    {display:'Camiseta Infantil',        preco:96.00},
+    {display:'Body Infantil',            preco:96.00},
+    {display:'Regata',                   preco:96.00},
+    {display:'Cropped',                  preco:94.00},
+    {display:'Cropped Moletom',          preco:159.00},
+    {display:'Hoodie Moletom',           preco:199.00},
+    {display:'Suéter Moletom',           preco:189.00},
+    {display:'Moeda Colecionável',       preco:null},
+  ];
+
+  document.getElementById('price-list').innerHTML = TABELA_DISPLAY.map(p => {
+    const ehMoeda = p.display === 'Moeda Colecionável';
+    const preco   = ehMoeda ? (moeda ? moeda.preco : null) : p.preco;
     const precoStr = preco ? `R$ ${preco.toFixed(2).replace('.',',')}` : 'Consultar';
     return `<div class="price-row">
-      <span class="price-nome">${p.nome==='Moeda Colecionável'?'🪙 ':''}${p.nome}</span>
+      <span class="price-nome">${ehMoeda?'🪙 ':''}${p.display}</span>
       <span class="price-val">${precoStr}</span>
     </div>`;
   }).join('');
