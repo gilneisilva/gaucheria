@@ -646,7 +646,6 @@ function setSyncStatus(status) {
 
 async function cloudLoad() {
   setSyncStatus('loading');
-  console.log('Carregando do JSONBin, BIN_ID:', BIN_ID);
   if (!BIN_ID) { setSyncStatus('ok'); return null; }
   try {
     const resp = await fetch(`${JSONBIN_API}/${BIN_ID}/latest`, {
@@ -660,27 +659,22 @@ async function cloudLoad() {
       throw new Error(`HTTP ${resp.status}: ${txt}`);
     }
     const data = await resp.json();
-    // JSONBin retorna {record: {...}} ou direto o objeto
     const record = data.record !== undefined ? data.record : data;
-    setSyncStatus('ok');
+    // Atualizar cache local com dados do servidor
     try { localStorage.setItem('gaucheria_estoque_v1', JSON.stringify(record)); } catch(_) {}
+    setSyncStatus('ok');
     return record;
   } catch(e) {
     console.warn('JSONBin load falhou:', e.message);
     setSyncStatus('err');
-    try {
-      const local = localStorage.getItem('gaucheria_estoque_v1');
-      if (local) { setSyncStatus('ok'); return JSON.parse(local); }
-    } catch(_) {}
-    setSyncStatus('ok');
-    return null;
+    return null; // Retorna null — init vai usar localStorage como fallback
   }
 }
 
 async function cloudSave(data) {
+  // Salvar no cache local imediatamente
   try { localStorage.setItem('gaucheria_estoque_v1', JSON.stringify(data)); } catch(_) {}
   setSyncStatus('loading');
-  console.log('Salvando no JSONBin, BIN_ID:', BIN_ID);
   try {
     if (!BIN_ID) {
       // Criar bin na primeira vez
@@ -767,8 +761,24 @@ async function save() {
 // ── INIT ASSÍNCRONO ──
 async function init() {
   setSyncStatus('loading');
+
+  // Mostrar loading enquanto carrega
+  document.querySelectorAll('.page').forEach(p => {
+    if (p.id !== 'page-entrada') return;
+  });
+
+  // Carregar SEMPRE do JSONBin (nunca do cache em primeiro lugar)
   const cloud = await cloudLoad();
-  if (cloud) state = cloud;
+  if (cloud) {
+    state = cloud;
+  } else {
+    // Só usar localStorage se JSONBin falhar
+    try {
+      const local = localStorage.getItem('gaucheria_estoque_v1');
+      if (local) state = JSON.parse(local);
+    } catch(_) {}
+  }
+
   // Garantir todos os campos sempre
   if (!Array.isArray(state.estoque))  state.estoque  = [];
   if (!Array.isArray(state.vendas))   state.vendas   = [];
@@ -776,11 +786,10 @@ async function init() {
   if (!Array.isArray(state.eventos))  state.eventos  = [];
   if (!state.nextId)                  state.nextId   = 1;
   if (state.evento === undefined)     state.evento   = '';
+
   document.getElementById('eventName').textContent = state.evento || 'Sem evento';
   renderEntradaHistorico();
   renderPrecos();
-  // Renderizar estoque se houver dados
-  if (state.estoque.length > 0) renderEntradaHistorico();
 }
 
 // ── TOAST ──
@@ -1095,11 +1104,11 @@ function renderEstoque() {
   const busca = (document.getElementById('busca-estoque').value || '').toLowerCase();
 
   // Filtrar progressivamente
-  let itens = state.estoque;
+  let itens = state.estoque.filter(i => i.quantidade > 0);
   if (filtroCategoria !== 'Todos') itens = itens.filter(i => i.categoria === filtroCategoria);
 
-  // Categorias disponíveis (total)
-  const cats = ['Todos', ...new Set(state.estoque.map(i => i.categoria))];
+  // Categorias disponíveis (só com estoque > 0)
+  const cats = ['Todos', ...new Set(state.estoque.filter(i => i.quantidade > 0).map(i => i.categoria))];
   document.getElementById('filtros-cat').innerHTML = cats.map(c =>
     `<div class="filter-chip ${c===filtroCategoria?'active':''}" onclick="setFiltroCat('${c}')">${c}</div>`
   ).join('');
