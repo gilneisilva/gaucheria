@@ -756,6 +756,261 @@ input, select, textarea { border-radius: 8px !important; font-size: 13px !import
   #lista-estoque .tag { min-height: 22px !important; padding: 3px 8px !important; font-size: 10px !important; }
 }
 
+
+
+/* ── REPORT CHARTS ── */
+.report-charts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.report-chart {
+  background: #fff;
+  border: 1px solid var(--cinza-cl);
+  border-radius: 14px;
+  padding: 14px;
+  min-height: 220px;
+}
+.report-chart-title {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.8px;
+  color: var(--cinza-dk);
+  margin-bottom: 12px;
+}
+.chart-row {
+  display: grid;
+  grid-template-columns: minmax(90px, 160px) 1fr auto;
+  align-items: center;
+  gap: 10px;
+  margin: 9px 0;
+}
+.chart-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--preto);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.chart-track {
+  height: 8px;
+  background: #EEEEEE;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.chart-bar {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--azul);
+  min-width: 3px;
+}
+.chart-row:nth-child(4n+2) .chart-bar { background: var(--azul); }
+.chart-row:nth-child(4n+3) .chart-bar { background: #FF6158; }
+.chart-row:nth-child(4n+4) .chart-bar { background: #F2A900; }
+.chart-row:nth-child(4n+5) .chart-bar { background: #A8BE00; }
+.chart-value {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--preto);
+  min-width: 38px;
+  text-align: right;
+}
+.report-insights {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.insight-mini {
+  background: var(--fundo);
+  border: 1px solid var(--cinza-cl);
+  border-radius: 12px;
+  padding: 12px;
+}
+.insight-mini strong {
+  display:block;
+  font-size: 15px;
+  line-height: 1.1;
+  color: var(--preto);
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.insight-mini span {
+  display:block;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--cinza);
+  font-weight: 800;
+}
+@media(max-width:760px) {
+  .report-charts-grid, .report-insights { grid-template-columns: 1fr; }
+  .chart-row { grid-template-columns: 96px 1fr auto; }
+}
+
+
+/* ── EVENT MANAGER ── */
+.event-manager-list{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.event-manager-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;border:1px solid var(--cinza-cl);border-radius:12px;padding:10px 12px;background:var(--branco)}
+.event-manager-name{font-size:13px;font-weight:700;color:var(--preto)}
+.event-manager-meta{font-size:10px;color:var(--cinza);margin-top:3px}
+.event-manager-actions{display:flex;gap:6px}
+.event-edit-list{border:1px solid var(--cinza-cl);border-radius:12px;padding:8px;margin-top:10px;max-height:240px;overflow:auto;background:var(--fundo)}
+.event-edit-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:8px;border-bottom:1px solid var(--cinza-cl)}
+.event-edit-row:last-child{border-bottom:none}
+.event-edit-title{font-size:12px;font-weight:700;color:var(--preto)}
+.event-edit-meta{font-size:10px;color:var(--cinza);margin-top:2px}
+.mini-btn{border:1px solid var(--cinza-cl);background:var(--branco);border-radius:8px;padding:7px 9px;font-size:11px;font-weight:700;cursor:pointer;min-height:auto!important}
+.mini-btn.dark{background:var(--preto);color:var(--branco);border-color:var(--preto)}
+.mini-btn.danger{color:var(--danger);border-color:#FCA5A5}
+
+
+
+/* ── RESPONSIVE REVIEW PATCH v9 ── */
+@media (max-width: 920px) {
+  header { position: sticky; top: 0; }
+  .tabs { position: sticky; top: 86px; z-index: 90; }
+  .tab { min-width: 86px; flex: 0 0 auto; }
+  .page,
+  #page-entrada.page,
+  #page-importar.page,
+  #page-vendas.page,
+  #page-saidas.page,
+  #page-precos.page,
+  #page-relatorio.page,
+  #page-estoque.page {
+    max-width: 100% !important;
+    padding: 10px !important;
+  }
+  .form-row { grid-template-columns: 1fr !important; gap: 0 !important; }
+  .stats-grid, .report-insights, .report-charts-grid { grid-template-columns: 1fr !important; }
+  #page-estoque > div:first-child {
+    position: sticky;
+    top: 155px !important;
+    z-index: 70;
+    display: grid !important;
+    grid-template-columns: 1fr auto auto;
+    gap: 8px !important;
+    margin-bottom: 8px !important;
+  }
+  #page-estoque > div:first-child input { min-width: 0; }
+  #filtros-painel,
+  #venda-filtros-painel,
+  #saida-filtros-painel,
+  #relatorio-filtros {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  #filtros-painel > div,
+  #venda-filtros-painel > div,
+  #saida-filtros-painel > div,
+  #relatorio-filtros > div {
+    align-items: flex-start !important;
+  }
+  .filter-row { gap: 6px !important; }
+}
+
+@media (max-width: 640px) {
+  body { font-size: 13px; }
+  header { padding: 8px 10px 6px !important; gap: 4px !important; }
+  .logo-svg svg { width: 54px !important; height: 54px !important; }
+  .logo-sub { font-size: 8px !important; letter-spacing: 2px !important; }
+  .event-badge { font-size: 10px !important; padding: 5px 9px !important; }
+  .tabs { top: 82px; }
+  .tab { min-width: 78px; padding: 8px 10px 7px !important; font-size: 8px !important; }
+  .tab .ti svg { width: 17px !important; height: 17px !important; }
+
+  .card, .section { padding: 12px !important; border-radius: 12px !important; }
+  .card-title, .section-title { font-size: 9px !important; letter-spacing: 1.5px !important; }
+  input, select, textarea { font-size: 13px !important; padding: 10px 11px !important; }
+  .btn { font-size: 12px !important; padding: 10px 12px !important; }
+
+  #page-estoque > div:first-child {
+    top: 134px !important;
+    grid-template-columns: 1fr !important;
+  }
+  #page-estoque > div:first-child button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  #lista-estoque .stock-item,
+  #lista-vendas .stock-item,
+  #lista-saidas .stock-item,
+  #entrada-historico .stock-item,
+  #lista-relatorio .stock-item {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 6px !important;
+    padding: 11px 8px !important;
+    align-items: flex-start !important;
+  }
+  #lista-estoque .item-name,
+  #lista-vendas .item-name,
+  #lista-saidas .item-name,
+  #entrada-historico .item-name,
+  #lista-relatorio .item-name {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    padding-right: 0 !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    font-size: 13px !important;
+    line-height: 1.2 !important;
+  }
+  #lista-estoque .item-meta,
+  #lista-vendas .item-meta,
+  #lista-saidas .item-meta,
+  #entrada-historico .item-meta,
+  #lista-relatorio .item-meta {
+    width: 100% !important;
+    gap: 5px !important;
+  }
+  .tag { font-size: 9px !important; padding: 3px 7px !important; min-height: 20px !important; }
+  #lista-estoque .item-price,
+  #lista-vendas .item-price,
+  #lista-saidas .item-price,
+  #entrada-historico .item-price,
+  #lista-relatorio .item-price {
+    min-width: 0 !important;
+    text-align: left !important;
+    padding-right: 0 !important;
+    font-size: 11px !important;
+  }
+  .qty-controls { justify-content: flex-start !important; gap: 8px !important; }
+  .qty-btn { width: 30px !important; height: 30px !important; font-size: 16px !important; }
+  .item-qty { font-size: 12px !important; }
+
+  .modal-overlay { align-items: flex-end !important; padding: 0 !important; }
+  .modal { max-width: 100% !important; border-radius: 16px 16px 0 0 !important; max-height: 88vh; overflow: auto; }
+  .modal-btns { flex-direction: column; }
+
+  .event-manager-row,
+  .event-edit-row { grid-template-columns: 1fr !important; }
+  .event-manager-actions { flex-wrap: wrap; }
+  .event-manager-actions .mini-btn { flex: 1 1 auto; }
+
+  .chart-row { grid-template-columns: 82px 1fr auto !important; gap: 7px !important; }
+  .chart-label, .chart-value { font-size: 10px !important; }
+  .report-chart { padding: 12px !important; min-height: 180px !important; }
+}
+
+@media (max-width: 380px) {
+  .tab { min-width: 68px; }
+  .filter-chip { font-size: 9px !important; padding: 5px 8px !important; }
+  #lista-estoque .item-name,
+  #lista-vendas .item-name,
+  #lista-saidas .item-name { font-size: 12px !important; }
+  .tag { font-size: 8px !important; padding: 3px 6px !important; }
+  .qty-btn { width: 28px !important; height: 28px !important; }
+}
+
 </style>
 </head>
 <body>
@@ -1073,6 +1328,102 @@ input, select, textarea { border-radius: 8px !important; font-size: 13px !import
   .list-qty,
   .list-action { justify-content: flex-start; }
 }
+
+
+/* ── REPORT CHARTS ── */
+.report-charts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.report-chart {
+  background: #fff;
+  border: 1px solid var(--cinza-cl);
+  border-radius: 14px;
+  padding: 14px;
+  min-height: 220px;
+}
+.report-chart-title {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.8px;
+  color: var(--cinza-dk);
+  margin-bottom: 12px;
+}
+.chart-row {
+  display: grid;
+  grid-template-columns: minmax(90px, 160px) 1fr auto;
+  align-items: center;
+  gap: 10px;
+  margin: 9px 0;
+}
+.chart-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--preto);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.chart-track {
+  height: 8px;
+  background: #EEEEEE;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.chart-bar {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--azul);
+  min-width: 3px;
+}
+.chart-row:nth-child(4n+2) .chart-bar { background: var(--azul); }
+.chart-row:nth-child(4n+3) .chart-bar { background: #FF6158; }
+.chart-row:nth-child(4n+4) .chart-bar { background: #F2A900; }
+.chart-row:nth-child(4n+5) .chart-bar { background: #A8BE00; }
+.chart-value {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--preto);
+  min-width: 38px;
+  text-align: right;
+}
+.report-insights {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.insight-mini {
+  background: var(--fundo);
+  border: 1px solid var(--cinza-cl);
+  border-radius: 12px;
+  padding: 12px;
+}
+.insight-mini strong {
+  display:block;
+  font-size: 15px;
+  line-height: 1.1;
+  color: var(--preto);
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.insight-mini span {
+  display:block;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--cinza);
+  font-weight: 800;
+}
+@media(max-width:760px) {
+  .report-charts-grid, .report-insights { grid-template-columns: 1fr; }
+  .chart-row { grid-template-columns: 96px 1fr auto; }
+}
+
 </style> </defs> <path class="st0" d="M73.1,187.6c5.6,18.6-4.8,24.8-8.2,26.2-2.2.9-4.5,1.4-6.7,1.4-5,0-9.6-2.2-11.8-6.1-1.8-3.1-4.2-11.6,11.6-23.2,1.4-1,3.3-.7,4.3.7,1,1.4.7,3.3-.7,4.3-9.7,7.1-11.4,12.5-9.9,15.2,1.6,2.8,6.8,3.8,10.8,2.1,2.8-1.2,8.8-5.4,4.7-18.9,0,0,0,0,0-.1-.1-.5-1.2-4.5-2.3-10.1,0,0,0,0-.1.1-3.4,4.1-8.6,6.5-14.2,6.5h0c-5.4,0-10.4-2.2-13.7-6.2-2.6-3.1-5.5-8.8-3.9-18,1.4-8.3,8.5-14.2,17.3-14.1s8.1,1.3,11.4,3.9c0-2.9.4-5.5,1.1-7.6.5-1.6,2.2-2.5,3.8-2,1.6.5,2.5,2.2,2,3.8-2.8,9.4,2.3,33.5,4.5,42ZM62.2,164s0,0,0,0c-1.3-7.6-7.2-10.3-12-10.4-4.9,0-10.3,2.8-11.3,9-.9,5.5,0,10,2.6,13,2.1,2.5,5.4,4,9,4h0c3.7,0,7.3-1.6,9.5-4.2,2.3-2.8,3.1-6.8,2.2-11.4ZM252.5,141.8c-1.4-2.2-1.1-5.3.7-7.1,1.2-1.2,3.1-1.2,4.3,0,.8.8,1.1,2.1.7,3.1.8.3,1.5.9,1.8,1.8.6,1.6-.2,3.3-1.8,3.9-.6.2-1.3.4-1.9.4-1.6,0-3-.8-3.9-2.2ZM278.4,186.9c0,1.7-1.4,3.1-3.1,3.1-8.4,0-14.7-2.3-18.8-6.7-2.7-3-4.2-6.7-4.8-10.6-1.7,2.7-3.6,4.9-5.7,6.3-3.3,2.2-6.2,1.9-8,1.2-7-2.5-4.9-14.3-4.2-18.1.2-1.2.4-2.3.7-3.4-1.9.8-3.7,1.2-5.3,1.3-.4,6.8-4,14.1-11.5,19-8.1,5.2-17.9,5.4-23.4.5-3.8-3.5-5.2-7.8-3.8-11.9.6-1.8,1.8-3.4,3.2-4.7-.7-.8-1.3-1.6-1.6-2.6-.9-2.3-1.3-6,2.1-11.2,3.4-5.2,9.1-6.2,13-5.5,3.6.7,6.2,2.8,6.8,5.6.7,3.8-.6,7.4-3.4,9.5-2.5,1.8-5.8,2-8.6.5-1.5-.8-2-2.7-1.2-4.2.8-1.5,2.7-2,4.2-1.2.9.5,1.6.2,1.9-.1.9-.6,1.2-1.8,1-3.3-.3-.3-1.4-1-3.1-1h0c-1.1,0-3.7.3-5.4,2.9-1.5,2.3-2,4.3-1.5,5.6.5,1.4,2.3,2,3.3,2.2,1.5.4,2.4,1.7,2.3,3.2-.1,1.5-1.3,2.7-2.8,2.8-1.9.1-3.7,1.6-4.3,3.3-.7,2.2.7,4.1,2.1,5.3,3.3,3,10.3,2.5,15.9-1.1,4.1-2.6,8.5-8.3,8.8-14.5-3.6-1.1-6.6-3.2-7.5-5.5-1.6-4,0-6.8,2.4-7.8,2.9-1.3,7.1.1,9.4,4.7.5,1,.9,2.1,1.2,3.3,3.4-.2,6.4-2.1,8.9-5.7.9-1.3,2.5-1.7,3.9-1,1.4.7,2,2.3,1.5,3.7,0,0-2,6.1-3.1,12.3-1.5,8.7-.1,11.1.3,11.2.3,0,1.1.4,2.6-.6,3.9-2.6,8.6-11.5,9.5-24.9.1-1.6,1.4-2.9,3.1-2.9h0c1.6,0,3,1.3,3,2.9.1,2.3-.1,5.1-.4,8.1-.7,7.5-1.5,16.9,3.2,22.2,2.8,3.1,7.6,4.7,14.2,4.7s3.1,1.4,3.1,3.1ZM188.6,179.4c1.1,1.3.9,3.2-.5,4.3-.6.5-1.3.7-1.9.7s-1.8-.4-2.4-1.1c-2.5-3.1-6.2-10.5-3.7-25.5.6-3.3,0-5-.5-5.6-.6-.5-2-.4-3.7.2-2.3.8-3.8,3.5-4.6,5.6-2.5,6.3-2.7,16.1-.3,21.1.7,1.4.2,3.2-1.2,4-1.4.8-3.1.4-4.1-.9-1.6-2.3-3.5-6.3-5.3-11.3-2.4,3.9-5.1,6.8-8.2,8.6-3.8,2.2-8.1,2.7-11.6,1.2-2.3-1-5.3-3.2-6.5-8.5-1.8-7.9-.3-15.1,4.3-19.8,3.3-3.4,7.8-5,11.8-4.2,1.7.3,2.7,2,2.4,3.6-.3,1.7-2,2.7-3.6,2.4-1.5-.3-4,.3-6.1,2.5-1.8,1.9-4.6,6.1-2.7,14.1.5,2.2,1.5,3.6,2.9,4.2,1.6.7,3.9.4,6-.9,3.3-1.9,6.2-5.9,8.6-11.5-3.5-12.1-5.9-27-4.3-39.2,1.5-10.8,5.3-17.1,10.3-16.7,2.6.2,7.1,2.5,7,15.6,0,10.9-1.2,20.9-3.1,29.4,1.7-2.5,3.8-4.3,6.2-5.2,3.9-1.4,7.4-1.1,9.7.8,1.8,1.5,3.8,4.7,2.7,11.3-1.5,9.1-.6,16.8,2.4,20.6ZM164.5,122.4c0-5.4-.8-8.1-1.4-9.1-1,1.1-2.8,4.6-3.7,11.1-1.1,8.4-.1,18.3,1.7,27.3,2-8.3,3.2-18.4,3.3-29.3ZM288.8,181.5c-.6.7-1.5,1.1-2.3,1.1s-1.4-.2-2-.7c-1-.9-2.2-2.4-2.9-6-2.4,2-5.5,3.1-9,3.1-7.3,0-10.2-3.9-11.3-6.2-1.8-3.8-1.3-8.8,1.3-12.1,2.4-3,6.1-4.6,10.8-4.6,0,0,.1,0,.2,0,2.4,0,5.3.5,7.7,1.5-.3-2.1-.8-3.7-1.5-4.3-1.6-1.6-3.4-2.4-5.5-2.4-3.4,0-6.4,2.2-7,2.9-1.1,1.3-3,1.4-4.3.3-1.3-1.1-1.4-3-.3-4.3,1.6-1.9,6.2-4.9,11.5-5,3.9-.1,7.4,1.4,10.1,4.2,2.9,3,4,9.5,3.1,15.6-.7,10.8,1,12.6,1.1,12.7,1.3,1.1,1.4,3,.4,4.3ZM281.1,164.5c-.1-.1-.3-.3-.4-.4-.7-.6-3.8-1.9-7.3-1.9s-.6,0-.8,0c-1.6.1-3.9.6-5.2,2.2-1,1.3-1.5,3.7-.6,5.6,1.1,2.2,3.7,2.7,5.8,2.7,3.6,0,6.1-1.7,7.6-5.3.4-.9.7-2,.9-3ZM102.9,184.4c-.6.7-1.5,1.1-2.3,1.1s-1.4-.2-2-.7c-1.1-.9-2.4-2.6-3.1-6.7-2.6,2.3-5.9,3.5-9.7,3.5-7.7,0-10.8-4.1-11.9-6.5-1.9-4-1.4-9.3,1.4-12.7,2.6-3.2,6.6-4.9,11.7-4.8,2.7,0,5.9.6,8.5,1.7-.3-2.4-1-4.4-1.7-5.1-1.7-1.8-3.7-2.6-6.1-2.6-3.5,0-6.8,2.2-7.7,3.2-1.1,1.3-3,1.4-4.3.3-1.3-1.1-1.4-3-.3-4.3,1.7-2,6.5-5.2,12.1-5.3,4.1-.1,7.8,1.4,10.7,4.5,3,3.1,4.2,10,3.2,16.3,0,0,0,0,0,0-.8,12,1.2,13.9,1.2,13.9,1.3,1.1,1.5,3,.4,4.3ZM95.1,166.2c-.2-.1-.4-.3-.5-.5-.7-.7-4.1-2.1-7.9-2.1s-.5,0-.8,0c-1.9,0-4.4.6-5.9,2.5-1.1,1.4-1.7,4.1-.6,6.3,1.2,2.5,4.1,3,6.4,3,3.9,0,6.7-1.9,8.4-5.8.5-1.1.8-2.2,1-3.3ZM142.6,188.9c-.2,1.5-1.5,2.6-3,2.6s-.3,0-.4,0c-5.8-.8-10.2-3.3-13-7.4-2.3-3.3-3.3-7.2-3.6-11.3-2.7,3.7-6.1,6.2-10.7,6-3.3-.2-5.1-1.7-6.1-3-3.1-4.2-1.4-11,.3-17.7.7-2.8,1.7-6.9,1.4-8.1-.9-1.4-.5-3.2.9-4.1,1.4-1,3.3-.6,4.3.8,1.9,2.8.8,7.3-.6,13-1.1,4.3-2.7,10.7-1.3,12.5,0,.1.3.5,1.5.5,0,0,.1,0,.2,0,5.8,0,9.4-11.6,11.6-18.6.7-2.2,1.3-4.1,1.9-5.6.6-1.4,2.2-2.2,3.7-1.8,1.5.4,2.4,1.9,2.2,3.4-.2,1-.5,2.4-.8,3.9-1.5,6.9-4.4,19.7.3,26.6,1.9,2.7,4.7,4.3,8.8,4.8,1.7.2,2.8,1.8,2.6,3.5Z"/> </svg></span>
   </div>
   <div class="hdr-info">
@@ -1398,6 +1749,18 @@ input, select, textarea { border-radius: 8px !important; font-size: 13px !import
     <div id="financeiro-detalhe"><div class="empty"><p>Registre vendas para ver o financeiro.</p></div></div>
   </div>
   <div class="card">
+    <div class="card-title"><span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span> Análises de vendas</div>
+    <div id="relatorio-insights" class="report-insights"></div>
+    <div class="report-charts-grid">
+      <div class="report-chart"><div class="report-chart-title">Tamanhos mais vendidos</div><div id="chart-tamanhos"></div></div>
+      <div class="report-chart"><div class="report-chart-title">Estampas mais vendidas</div><div id="chart-estampas"></div></div>
+      <div class="report-chart"><div class="report-chart-title">Cores mais vendidas</div><div id="chart-cores"></div></div>
+      <div class="report-chart"><div class="report-chart-title">Categorias mais vendidas</div><div id="chart-categorias"></div></div>
+      <div class="report-chart"><div class="report-chart-title">Coleções / edições mais vendidas</div><div id="chart-edicoes"></div></div>
+      <div class="report-chart"><div class="report-chart-title">Receita por evento</div><div id="chart-eventos"></div></div>
+    </div>
+  </div>
+  <div class="card">
     <div class="card-title"><span class="ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="8 3 4 3 4 10"/><polyline points="16 3 20 3 20 10"/><path d="M4 10a8 8 0 0016 0"/><line x1="12" y1="18" x2="12" y2="21"/><line x1="8" y1="21" x2="16" y2="21"/></svg></span> Mais rentáveis</div>
     <div id="ranking-vendidos"><div class="empty"><p>Registre vendas para ver o ranking.</p></div></div>
   </div>
@@ -1440,10 +1803,16 @@ input, select, textarea { border-radius: 8px !important; font-size: 13px !import
     <input type="hidden" id="edit-evento-original">
     <label>Novo nome</label>
     <input id="edit-evento-nome" type="text" placeholder="Nome do evento">
+    <label>Data do evento</label>
+    <input id="edit-evento-data" type="date">
+    <div id="edit-evento-resumo" class="info-box" style="margin-top:0"></div>
+    <div class="divider">Vendas e saídas deste evento</div>
+    <div id="edit-evento-itens" class="event-edit-list"></div>
     <div class="modal-btns">
       <button class="btn btn-primary" style="flex:1" onclick="confirmarEditarEvento()">✔ Salvar</button>
-      <button class="btn" style="background:var(--cinza-cl);flex:1" onclick="document.getElementById('modal-editar-evento').classList.remove('open')">Cancelar</button>
+      <button class="btn btn-danger" style="flex:1" onclick="excluirEventoAtual()">🗑 Excluir evento</button>
     </div>
+    <button class="btn" style="background:var(--cinza-cl);margin-top:8px;width:100%" onclick="document.getElementById('modal-editar-evento').classList.remove('open')">Cancelar</button>
   </div>
 </div>
 
@@ -1452,6 +1821,10 @@ input, select, textarea { border-radius: 8px !important; font-size: 13px !import
   <div class="modal">
     <h2>✏️ Editar saída</h2>
     <input type="hidden" id="edit-saida-id">
+    <label>Produto</label>
+    <select id="edit-saida-produto"></select>
+    <label>Evento</label>
+    <select id="edit-saida-evento"></select>
     <label>Quantidade</label>
     <input id="edit-saida-qty" type="number" min="1" value="1">
     <label>Motivo</label>
@@ -1477,6 +1850,10 @@ input, select, textarea { border-radius: 8px !important; font-size: 13px !import
   <div class="modal">
     <h2>Editar venda</h2>
     <input type="hidden" id="edit-venda-id">
+    <label>Produto vendido</label>
+    <select id="edit-venda-produto"></select>
+    <label>Evento</label>
+    <select id="edit-venda-evento"></select>
     <label>Quantidade</label>
     <input id="edit-venda-qty" type="number" min="1" value="1">
     <label>Preço unit. (R$)</label>
@@ -1486,6 +1863,26 @@ input, select, textarea { border-radius: 8px !important; font-size: 13px !import
       <button class="btn btn-danger" style="flex:1" onclick="confirmarExcluirVenda()">🗑 Excluir</button>
     </div>
     <button class="btn" style="background:var(--cinza-cl);margin-top:8px;width:100%" onclick="document.getElementById('modal-editar-venda').classList.remove('open')">Cancelar</button>
+  </div>
+</div>
+
+
+<!-- MODAL EDITAR PREÇO -->
+<div class="modal-overlay" id="modal-editar-preco">
+  <div class="modal">
+    <h2>Editar preço</h2>
+    <input type="hidden" id="edit-preco-display">
+    <input type="hidden" id="edit-preco-nomes">
+    <div id="edit-preco-titulo" style="font-size:14px;font-weight:700;margin-bottom:12px"></div>
+    <div id="edit-preco-info" class="info-box"></div>
+    <label>Preço de venda (R$)</label>
+    <input id="edit-preco-venda" type="number" min="0" step="0.01" placeholder="0,00">
+    <label>Preço de custo ReservaInk, plano Incrível (R$)</label>
+    <input id="edit-preco-custo" type="number" min="0" step="0.01" placeholder="0,00">
+    <div class="modal-btns">
+      <button class="btn btn-primary" style="flex:1" onclick="confirmarEditarPreco()">✔ Salvar</button>
+      <button class="btn" style="background:var(--cinza-cl);flex:1" onclick="document.getElementById('modal-editar-preco').classList.remove('open')">Cancelar</button>
+    </div>
   </div>
 </div>
 
@@ -1604,19 +2001,31 @@ const TABELA = [
   {nome:'Suéter Moletom',           preco:189.00, custo:99.00},
   {nome:'Moeda Colecionável',      preco:null,   custo:null},
 ];
+function precoKey(nome) {
+  return String(nome || '').trim().toLowerCase();
+}
+function precoRegistro(nome) {
+  const n = precoKey(nome);
+  if (!n) return null;
+  let base = TABELA.find(t => precoKey(t.nome) === n);
+  if (!base) base = TABELA.find(t => n.includes(precoKey(t.nome)) || precoKey(t.nome).includes(n));
+  if (!base) return null;
+  const override = (state.precos && state.precos[precoKey(base.nome)]) || {};
+  return {
+    nome: base.nome,
+    preco: override.preco !== undefined && override.preco !== '' ? Number(override.preco) : base.preco,
+    custo: override.custo !== undefined && override.custo !== '' ? Number(override.custo) : base.custo,
+    precoBase: base.preco,
+    custoBase: base.custo
+  };
+}
 function getCusto(nome) {
-  const n = (nome||'').toLowerCase();
-  // Busca exata primeiro
-  let p = TABELA.find(t => t.nome.toLowerCase() === n);
-  // Se não achar, busca parcial
-  if (!p) p = TABELA.find(t => n.includes(t.nome.toLowerCase()) || t.nome.toLowerCase().includes(n));
+  const p = precoRegistro(nome);
   return p ? p.custo : null;
 }
 
 function getPreco(nome) {
-  const n = (nome||'').toLowerCase();
-  let p = TABELA.find(t => t.nome.toLowerCase() === n);
-  if (!p) p = TABELA.find(t => n.includes(t.nome.toLowerCase()) || t.nome.toLowerCase().includes(n));
+  const p = precoRegistro(nome);
   return p ? p.preco : null;
 }
 
@@ -1650,6 +2059,7 @@ async function init() {
   if (!Array.isArray(state.vendas))   state.vendas   = [];
   if (!Array.isArray(state.saidas))   state.saidas   = [];
   if (!Array.isArray(state.eventos))  state.eventos  = [];
+  if (!state.precos || typeof state.precos !== 'object') state.precos = {};
   if (!state.nextId)                  state.nextId   = 1;
   if (state.evento === undefined)     state.evento   = '';
 
@@ -2539,7 +2949,7 @@ function renderSaidas() {
       </div>
       <div class="list-qty">${s.quantidade} un.</div>
       <div class="list-action">
-        <button class="mini-btn danger" onclick="excluirSaida(${s.id})">🗑 Excluir</button>
+        <button class="mini-btn" onclick="abrirEditarSaida(${s.id})">✏️ Editar</button>
       </div>
     </div>`).join('')}</div>`;
 }
@@ -2560,41 +2970,201 @@ async function excluirSaida(id) {
 
 // ── PREÇOS ──
 
-function renderPrecos() {
+function precosDisplayTabela() {
   const moeda = state.estoque.find(i=>i.categoria==='Moeda Colecionável'&&i.preco>0);
-
-  // Tabela para exibição ao cliente — sem duplicatas, usando campo display
-  const TABELA_DISPLAY = [
-    {display:'Camiseta (Fem e Masc)',    preco:102.90},
-    {display:'Camiseta Algod. Peruano',  preco:119.00},
-    {display:'Camiseta Oversized',       preco:129.00},
-    {display:'Camiseta Infantil',        preco:96.00},
-    {display:'Body Infantil',            preco:96.00},
-    {display:'Regata',                   preco:96.00},
-    {display:'Cropped',                  preco:94.00},
-    {display:'Cropped Moletom',          preco:159.00},
-    {display:'Hoodie Moletom',           preco:199.00},
-    {display:'Suéter Moletom',           preco:189.00},
-    {display:'Moeda Colecionável',       preco:null},
+  const linhas = [
+    {display:'Camiseta (Fem e Masc)', nomes:['Camiseta Masculino','Camiseta Feminino']},
+    {display:'Camiseta Algod. Peruano', nomes:['Camiseta Algod. Peruano']},
+    {display:'Camiseta Oversized', nomes:['Camiseta Oversized']},
+    {display:'Camiseta Infantil', nomes:['Camiseta Infantil']},
+    {display:'Body Infantil', nomes:['Body Infantil']},
+    {display:'Regata', nomes:['Regata']},
+    {display:'Cropped', nomes:['Cropped']},
+    {display:'Cropped Moletom', nomes:['Cropped Moletom']},
+    {display:'Hoodie Moletom', nomes:['Hoodie Masculino','Hoodie Feminino','Hoodie Moletom']},
+    {display:'Suéter Moletom', nomes:['Suéter Masculino','Suéter Feminino','Suéter Moletom']},
+    {display:'Moeda Colecionável', nomes:['Moeda Colecionável'], moeda:true},
   ];
+  return linhas.map(l => {
+    const reg = precoRegistro(l.nomes[0]) || {};
+    return {
+      ...l,
+      preco: l.moeda ? (moeda ? moeda.preco : null) : reg.preco,
+      custo: l.moeda ? null : reg.custo
+    };
+  });
+}
 
-  document.getElementById('price-list').innerHTML = TABELA_DISPLAY.map(p => {
-    const ehMoeda = p.display === 'Moeda Colecionável';
-    const preco   = ehMoeda ? (moeda ? moeda.preco : null) : p.preco;
-    const precoStr = preco ? `R$ ${preco.toFixed(2).replace('.',',')}` : 'Consultar';
-    return `<div class="price-row">
-      <span class="price-nome">${ehMoeda?'🪙 ':''}${p.display}</span>
+function renderPrecos() {
+  document.getElementById('price-list').innerHTML = precosDisplayTabela().map(p => {
+    const precoStr = p.preco ? `R$ ${Number(p.preco).toFixed(2).replace('.',',')}` : 'Consultar';
+    const custoStr = p.custo !== null && p.custo !== undefined ? `Custo: R$ ${Number(p.custo).toFixed(2).replace('.',',')}` : 'Custo não informado';
+    return `<div class="price-row" style="gap:12px">
+      <div style="flex:1;min-width:0">
+        <div class="price-nome">${p.moeda?'🪙 ':''}${escapeHtml(p.display)}</div>
+        <div style="font-size:10px;color:var(--cinza);margin-top:3px">${escapeHtml(custoStr)} · ReservaInk plano Incrível</div>
+      </div>
       <span class="price-val">${precoStr}</span>
+      <button class="mini-btn dark" onclick="abrirEditarPreco('${escapeAttr(p.display)}')">Editar</button>
     </div>`;
   }).join('');
+}
+
+function abrirEditarPreco(display) {
+  const linha = precosDisplayTabela().find(p => p.display === display);
+  if (!linha) return;
+  document.getElementById('edit-preco-display').value = linha.display;
+  document.getElementById('edit-preco-nomes').value = linha.nomes.join('|');
+  document.getElementById('edit-preco-titulo').textContent = linha.display;
+  document.getElementById('edit-preco-venda').value = linha.preco ? Number(linha.preco).toFixed(2) : '';
+  document.getElementById('edit-preco-custo').value = linha.custo !== null && linha.custo !== undefined ? Number(linha.custo).toFixed(2) : '';
+  const info = linha.nomes.length > 1 ? 'Este ajuste será aplicado em: ' + linha.nomes.join(', ') : 'Este ajuste será aplicado em: ' + linha.nomes[0];
+  document.getElementById('edit-preco-info').textContent = info;
+  document.getElementById('modal-editar-preco').classList.add('open');
+}
+
+async function confirmarEditarPreco() {
+  const nomes = (document.getElementById('edit-preco-nomes').value || '').split('|').filter(Boolean);
+  const precoTxt = String(document.getElementById('edit-preco-venda').value || '').replace(',','.');
+  const custoTxt = String(document.getElementById('edit-preco-custo').value || '').replace(',','.');
+  const preco = precoTxt === '' ? null : Number(precoTxt);
+  const custo = custoTxt === '' ? null : Number(custoTxt);
+  if ((preco !== null && (isNaN(preco) || preco < 0)) || (custo !== null && (isNaN(custo) || custo < 0))) {
+    toast('Informe valores válidos.'); return;
+  }
+  if (!state.precos || typeof state.precos !== 'object') state.precos = {};
+  nomes.forEach(nome => {
+    const key = precoKey(nome);
+    const base = TABELA.find(t => t.nome === nome) || {};
+    state.precos[key] = {
+      preco: preco === null ? base.preco : preco,
+      custo: custo === null ? base.custo : custo
+    };
+  });
+  await save();
+  document.getElementById('modal-editar-preco').classList.remove('open');
+  renderPrecos();
+  if (typeof renderRelatorio === 'function') renderRelatorio();
+  toast('Preço e custo atualizados.');
 }
 
 // ── RELATÓRIO ──
 let filtroRelatorioEvento = 'Todos';
 
+function custoDaVenda(v) {
+  const qty = Number(v.quantidade) || 0;
+
+  // Vendas novas já têm custo salvo no registro.
+  if (Number(v.totalCusto) > 0) return Number(v.totalCusto);
+  if (Number(v.custo) > 0) return qty * Number(v.custo);
+
+  // Fallback para vendas antigas: tenta recalcular pelo item atual, categoria ou nome.
+  const item = state.estoque.find(i => i.id === v.itemId) || null;
+  const custoUnit =
+    getCusto(v.categoria) ||
+    (item ? getCusto(item.categoria) : null) ||
+    getCusto(v.nome) ||
+    0;
+
+  return qty * custoUnit;
+}
+
+function custoDaSaida(s) {
+  const qty = Number(s.quantidade) || 0;
+  if (Number(s.custoTotal) > 0) return Number(s.custoTotal);
+  if (Number(s.custoUnit) > 0) return qty * Number(s.custoUnit);
+
+  const item = state.estoque.find(i => i.id === s.itemId) || null;
+  const custoUnit =
+    getCusto(s.categoria) ||
+    (item ? getCusto(item.categoria) : null) ||
+    getCusto(s.nome) ||
+    0;
+
+  return qty * custoUnit;
+}
+
+function eventosDoRelatorio() {
+  const eventos = new Set();
+  if (state.evento) eventos.add(state.evento);
+  (state.vendas || []).forEach(v => eventos.add(v.evento || 'Sem evento'));
+  (state.saidas || []).forEach(s => eventos.add(s.evento || 'Sem evento'));
+  return ['Todos', ...Array.from(eventos).filter(Boolean).sort((a,b)=>a.localeCompare(b,'pt-BR'))];
+}
+
+
+function agruparVendas(vendas, getter, tipo='qty') {
+  const mapa = {};
+  vendas.forEach(v => {
+    const nome = getter(v);
+    if (!nome) return;
+    if (!mapa[nome]) mapa[nome] = { nome, qty:0, receita:0 };
+    mapa[nome].qty += Number(v.quantidade)||0;
+    mapa[nome].receita += Number(v.total)||0;
+  });
+  return Object.values(mapa).sort((a,b) => (tipo==='receita' ? b.receita-a.receita : b.qty-a.qty) || a.nome.localeCompare(b.nome,'pt-BR'));
+}
+
+function renderBarChart(elId, dados, campo='qty', sufixo='un.', maxItems=8) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  const arr = (dados || []).filter(d => Number(d[campo]) > 0).slice(0, maxItems);
+  if (!arr.length) {
+    el.innerHTML = '<div class="empty" style="padding:22px 8px"><p>Sem dados suficientes.</p></div>';
+    return;
+  }
+  const max = Math.max(...arr.map(d => Number(d[campo])||0), 1);
+  el.innerHTML = arr.map(d => {
+    const val = Number(d[campo])||0;
+    const w = Math.max(4, (val / max) * 100);
+    const texto = campo === 'receita' ? `R$ ${val.toFixed(0)}` : `${val} ${sufixo}`;
+    return `<div class="chart-row">
+      <div class="chart-label" title="${d.nome}">${d.nome}</div>
+      <div class="chart-track"><div class="chart-bar" style="width:${w}%"></div></div>
+      <div class="chart-value">${texto}</div>
+    </div>`;
+  }).join('');
+}
+
+function primeiroOuTraco(arr) {
+  if (!arr || !arr.length) return '—';
+  return `${arr[0].nome}`;
+}
+
+function renderAnalisesRelatorio(vendas) {
+  const porTam = agruparVendas(vendas, v => v.tamanho || '', 'qty');
+  const porNome = agruparVendas(vendas, v => v.nome || '', 'qty');
+  const porCor = agruparVendas(vendas, v => v.cor || '', 'qty');
+  const porCat = agruparVendas(vendas, v => v.categoria || '', 'qty');
+  const porEdi = agruparVendas(vendas, v => v.edicao || '', 'qty');
+  const porEventoReceita = agruparVendas(vendas, v => v.evento || 'Sem evento', 'receita');
+
+  const totalUn = vendas.reduce((s,v)=>s+(Number(v.quantidade)||0),0);
+  const receita = vendas.reduce((s,v)=>s+(Number(v.total)||0),0);
+  const ticketMedio = totalUn > 0 ? receita / totalUn : 0;
+
+  const insights = document.getElementById('relatorio-insights');
+  if (insights) {
+    insights.innerHTML = `
+      <div class="insight-mini"><strong>${primeiroOuTraco(porTam)}</strong><span>Tamanho campeão</span></div>
+      <div class="insight-mini"><strong>${primeiroOuTraco(porNome)}</strong><span>Estampa campeã</span></div>
+      <div class="insight-mini"><strong>${primeiroOuTraco(porCor)}</strong><span>Cor campeã</span></div>
+      <div class="insight-mini"><strong>R$ ${ticketMedio.toFixed(2)}</strong><span>Ticket médio por peça</span></div>`;
+  }
+
+  renderBarChart('chart-tamanhos', porTam, 'qty', 'un.', 8);
+  renderBarChart('chart-estampas', porNome, 'qty', 'un.', 8);
+  renderBarChart('chart-cores', porCor, 'qty', 'un.', 8);
+  renderBarChart('chart-categorias', porCat, 'qty', 'un.', 8);
+  renderBarChart('chart-edicoes', porEdi, 'qty', 'un.', 8);
+  renderBarChart('chart-eventos', porEventoReceita, 'receita', '', 8);
+}
+
 function renderRelatorio() {
-  // Filtros de evento
-  const todosEventos = ['Todos', ...new Set(state.vendas.map(v => v.evento||'Sem evento').filter(Boolean))];
+  // Filtros de evento: agora considera vendas, saídas e o evento atual.
+  const todosEventos = eventosDoRelatorio();
+  if (!todosEventos.includes(filtroRelatorioEvento)) filtroRelatorioEvento = 'Todos';
+
   const filtrosEl = document.getElementById('relatorio-filtros-evento');
   if (filtrosEl) {
     filtrosEl.innerHTML = todosEventos.map(e =>
@@ -2604,22 +3174,23 @@ function renderRelatorio() {
 
   // Filtrar por evento
   const vendas = filtroRelatorioEvento === 'Todos'
-    ? state.vendas
-    : state.vendas.filter(v => (v.evento||'Sem evento') === filtroRelatorioEvento);
+    ? (state.vendas || [])
+    : (state.vendas || []).filter(v => (v.evento||'Sem evento') === filtroRelatorioEvento);
   const saidas = filtroRelatorioEvento === 'Todos'
-    ? (state.saidas||[])
-    : (state.saidas||[]).filter(s => (s.evento||'Sem evento') === filtroRelatorioEvento);
+    ? (state.saidas || [])
+    : (state.saidas || []).filter(s => (s.evento||'Sem evento') === filtroRelatorioEvento);
 
-  const tE   = state.estoque.reduce((s,i) => s+i.quantidade, 0);
-  const tR   = vendas.reduce((s,v) => s+v.total, 0);
-  const tC   = vendas.reduce((s,v) => s+(v.totalCusto||0), 0);
+  // Estoque é global, então mantém o total geral. O restante respeita o evento selecionado.
+  const tE   = state.estoque.reduce((s,i) => s+(Number(i.quantidade)||0), 0);
+  const tR   = vendas.reduce((s,v) => s+(Number(v.total)||0), 0);
+  const tC   = vendas.reduce((s,v) => s+custoDaVenda(v), 0);
   const tL   = tR - tC;
-  const tV   = vendas.reduce((s,v) => s+v.quantidade, 0);
-  const tP   = new Set(state.estoque.map(i=>i.nome)).size;
-  const tMkt = saidas.reduce((s,x) => s+(x.custoTotal||0), 0);
-  const tSai = saidas.reduce((s,x) => s+x.quantidade, 0);
+  const tV   = vendas.reduce((s,v) => s+(Number(v.quantidade)||0), 0);
+  const tMkt = saidas.reduce((s,x) => s+custoDaSaida(x), 0);
+  const tSai = saidas.reduce((s,x) => s+(Number(x.quantidade)||0), 0);
   const tLreal  = tL - tMkt;
-  const margem  = tR > 0 ? ((tLreal/tR)*100).toFixed(1) : 0;
+  const margemNum = tR > 0 ? (tLreal/tR)*100 : 0;
+  const margem  = tR > 0 ? margemNum.toFixed(1) : '0.0';
 
   document.getElementById('stats-grid').innerHTML = `
     <div class="stat-card dark"><div class="stat-num">${tE}</div><div class="stat-label">Em estoque</div></div>
@@ -2649,17 +3220,21 @@ function renderRelatorio() {
       <div style="font-size:16px;font-weight:700;color:#276749">R$ ${tLreal.toFixed(2)}</div>
     </div>` : ''}
     <div style="background:var(--cinza-cl);border-radius:20px;height:8px;overflow:hidden">
-      <div style="background:linear-gradient(90deg,var(--azul),#276749);height:100%;width:${Math.min(margem,100)}%;border-radius:20px;transition:width .5s"></div>
+      <div style="background:linear-gradient(90deg,var(--azul),#276749);height:100%;width:${Math.max(0, Math.min(margemNum,100))}%;border-radius:20px;transition:width .5s"></div>
     </div>
     <div style="font-size:11px;color:var(--cinza);text-align:center;margin-top:5px">${tV} vendida(s) · margem real ${margem}%</div>
   ` : '<div class="empty"><p>Registre vendas para ver o financeiro.</p></div>';
+
+  renderAnalisesRelatorio(vendas);
 
   // Ranking
   const rank = {};
   vendas.forEach(v => {
     const k = v.nome+(v.tamanho?' '+v.tamanho:'')+(v.cor?' '+v.cor:'')+(v.edicao?' '+v.edicao:'');
     if (!rank[k]) rank[k] = {nome:v.nome,tamanho:v.tamanho,cor:v.cor,edicao:v.edicao,qty:0,total:0,lucro:0};
-    rank[k].qty+=v.quantidade; rank[k].total+=v.total; rank[k].lucro+=(v.total-(v.totalCusto||0));
+    rank[k].qty += Number(v.quantidade)||0;
+    rank[k].total += Number(v.total)||0;
+    rank[k].lucro += (Number(v.total)||0) - custoDaVenda(v);
   });
   const ra = Object.values(rank).sort((a,b)=>b.lucro-a.lucro).slice(0,8);
   document.getElementById('ranking-vendidos').innerHTML = ra.length
@@ -2675,32 +3250,39 @@ function renderRelatorio() {
 
   // Resumo por evento
   const porEvento = {};
-  state.vendas.forEach(v => {
+  (state.vendas || []).forEach(v => {
     const ev = v.evento || 'Sem evento';
-    if (!porEvento[ev]) porEvento[ev] = {nome:ev, qty:0, receita:0, lucro:0};
-    porEvento[ev].qty     += v.quantidade;
-    porEvento[ev].receita += v.total;
-    porEvento[ev].lucro   += (v.total - (v.totalCusto||0));
+    if (!porEvento[ev]) porEvento[ev] = {nome:ev, qty:0, receita:0, lucro:0, marketing:0};
+    porEvento[ev].qty     += Number(v.quantidade)||0;
+    porEvento[ev].receita += Number(v.total)||0;
+    porEvento[ev].lucro   += (Number(v.total)||0) - custoDaVenda(v);
   });
-  const evArr = Object.values(porEvento).sort((a,b) => b.receita - a.receita);
+  (state.saidas || []).forEach(s => {
+    const ev = s.evento || 'Sem evento';
+    if (!porEvento[ev]) porEvento[ev] = {nome:ev, qty:0, receita:0, lucro:0, marketing:0};
+    porEvento[ev].marketing += custoDaSaida(s);
+  });
+  Object.values(porEvento).forEach(e => { e.lucroReal = e.lucro - e.marketing; });
+
+  const evArr = Object.values(porEvento).sort((a,b) => b.receita - a.receita || a.nome.localeCompare(b.nome,'pt-BR'));
   const resumoEl = document.getElementById('resumo-eventos');
   if (resumoEl) {
     resumoEl.innerHTML = evArr.length ? evArr.map(e => `
       <div class="rank-item">
         <div style="flex:1">
           <div class="rank-name">📅 ${e.nome}</div>
-          <div class="rank-meta">${e.qty} unidade(s) vendida(s)</div>
+          <div class="rank-meta">${e.qty} unidade(s) vendida(s)${e.marketing>0?` · marketing R$ ${e.marketing.toFixed(2)}`:''}</div>
         </div>
         <div style="text-align:right">
           <div style="font-weight:700;color:var(--azul-dk)">R$ ${e.receita.toFixed(2)}</div>
-          <div style="font-size:11px;color:#276749">lucro R$ ${e.lucro.toFixed(2)}</div>
+          <div style="font-size:11px;color:#276749">lucro real R$ ${e.lucroReal.toFixed(2)}</div>
         </div>
       </div>`).join('')
-    : '<div class="empty"><p>Nenhum evento com vendas ainda.</p></div>';
+    : '<div class="empty"><p>Nenhum evento com vendas ou saídas ainda.</p></div>';
   }
 
   // Estoque baixo
-  const baixo = state.estoque.filter(i=>i.quantidade<=2).sort((a,b)=>a.quantidade-b.quantidade);
+  const baixo = state.estoque.filter(i=>(Number(i.quantidade)||0)<=2).sort((a,b)=>(Number(a.quantidade)||0)-(Number(b.quantidade)||0));
   document.getElementById('lista-baixo').innerHTML = baixo.length
     ? `<div class="stock-list">${baixo.map(i=>`
         <div class="stock-item">
@@ -2772,6 +3354,258 @@ function verificarLogin() {
 }
 
 verificarLogin();
+
+// ─────────────────────────────────────────
+// GERENCIADOR DE EVENTOS, VENDAS E SAÍDAS
+// ─────────────────────────────────────────
+function normalizeDateBRToISO(d) {
+  if (!d) return '';
+  if (/^\d{4}-\d{2}-\d{2}$/.test(d)) return d;
+  const m = String(d).match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  return m ? `${m[3]}-${m[2]}-${m[1]}` : '';
+}
+function formatISOToBR(d) {
+  if (!d) return '';
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(d)) return d;
+  const m = String(d).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  return m ? `${m[3]}/${m[2]}/${m[1]}` : d;
+}
+function todosEventosRegistrados() {
+  const map = new Map();
+  (state.eventos || []).forEach(e => {
+    if (!e || !e.nome) return;
+    map.set(e.nome, { nome:e.nome, data:e.data || '' });
+  });
+  (state.vendas || []).forEach(v => {
+    const nome = v.evento || 'Sem evento';
+    if (!map.has(nome)) map.set(nome, { nome, data:'' });
+  });
+  (state.saidas || []).forEach(s => {
+    const nome = s.evento || 'Sem evento';
+    if (!map.has(nome)) map.set(nome, { nome, data:'' });
+  });
+  return Array.from(map.values()).sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
+}
+function garantirEventoCatalogado(nome) {
+  if (!nome) nome = 'Sem evento';
+  if (!Array.isArray(state.eventos)) state.eventos = [];
+  if (!state.eventos.find(e => e.nome === nome)) state.eventos.push({nome, data:''});
+}
+function opcoesEventosHTML(valorAtual='') {
+  const eventos = todosEventosRegistrados().map(e=>e.nome);
+  if (valorAtual && !eventos.includes(valorAtual)) eventos.push(valorAtual);
+  return eventos.sort((a,b)=>a.localeCompare(b,'pt-BR')).map(n=>`<option value="${escapeAttr(n)}" ${n===valorAtual?'selected':''}>${escapeHtml(n)}</option>`).join('');
+}
+function escapeHtml(str){return String(str??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
+function escapeAttr(str){return escapeHtml(str).replace(/`/g,'&#096;');}
+
+// Substitui a lista antiga: agora mostra todos os eventos encontrados, inclusive os que só existem em vendas/saídas.
+function renderEventosLista() {
+  const lista = document.getElementById('modal-eventos-lista');
+  if (!lista) return;
+  const eventos = todosEventosRegistrados();
+  if (!eventos.length) { lista.innerHTML = '<div class="empty"><p>Nenhum evento cadastrado.</p></div>'; return; }
+  lista.innerHTML = `<div class="divider">Eventos cadastrados</div><div class="event-manager-list">${eventos.map(e => {
+    const vendas = (state.vendas||[]).filter(v => (v.evento||'Sem evento') === e.nome).length;
+    const saidas = (state.saidas||[]).filter(s => (s.evento||'Sem evento') === e.nome).length;
+    const atual = state.evento === e.nome;
+    return `<div class="event-manager-row">
+      <div>
+        <div class="event-manager-name">${escapeHtml(e.nome)}${atual?' · atual':''}</div>
+        <div class="event-manager-meta">${e.data ? formatISOToBR(e.data) + ' · ' : ''}${vendas} venda(s) · ${saidas} saída(s)</div>
+      </div>
+      <div class="event-manager-actions">
+        <button class="mini-btn" onclick="selecionarEvento('${escapeAttr(e.nome)}')">Usar</button>
+        <button class="mini-btn dark" onclick="abrirEditarEvento('${escapeAttr(e.nome)}')">Editar</button>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+function selecionarEvento(nome) {
+  document.getElementById('modal-evento-nome').value = nome;
+}
+function abrirEditarEvento(nome) {
+  garantirEventoCatalogado(nome);
+  const ev = (state.eventos||[]).find(e => e.nome === nome) || {nome, data:''};
+  document.getElementById('edit-evento-original').value = nome;
+  document.getElementById('edit-evento-nome').value = nome;
+  document.getElementById('edit-evento-data').value = normalizeDateBRToISO(ev.data);
+  renderEditarEventoItens(nome);
+  document.getElementById('modal-editar-evento').classList.add('open');
+}
+function renderEditarEventoItens(nome) {
+  const vendas = (state.vendas||[]).filter(v => (v.evento||'Sem evento') === nome);
+  const saidas = (state.saidas||[]).filter(s => (s.evento||'Sem evento') === nome);
+  const receita = vendas.reduce((t,v)=>t+(Number(v.total)||0),0);
+  const resumo = document.getElementById('edit-evento-resumo');
+  if (resumo) resumo.innerHTML = `<strong>${vendas.length}</strong> venda(s), <strong>${saidas.length}</strong> saída(s) · Receita: <strong>R$ ${receita.toFixed(2)}</strong>`;
+  const box = document.getElementById('edit-evento-itens');
+  if (!box) return;
+  const linhas = [
+    ...vendas.map(v => ({tipo:'Venda', id:v.id, nome:v.nome, meta:`${v.quantidade} un. · R$ ${(Number(v.total)||0).toFixed(2)} · ${v.hora||''}`, action:`abrirEditarVenda(${v.id})`})),
+    ...saidas.map(s => ({tipo:'Saída', id:s.id, nome:s.nome, meta:`${s.quantidade} un. · ${s.motivo||''} · ${s.hora||''}`, action:`abrirEditarSaida(${s.id})`}))
+  ];
+  box.innerHTML = linhas.length ? linhas.map(l => `<div class="event-edit-row"><div><div class="event-edit-title">${l.tipo}: ${escapeHtml(l.nome)}</div><div class="event-edit-meta">${escapeHtml(l.meta)}</div></div><button class="mini-btn" onclick="${l.action}">Editar</button></div>`).join('') : '<div class="empty"><p>Nenhuma venda ou saída neste evento.</p></div>';
+}
+async function confirmarEditarEvento() {
+  const original = document.getElementById('edit-evento-original').value;
+  const novo = document.getElementById('edit-evento-nome').value.trim() || original;
+  const dataISO = document.getElementById('edit-evento-data').value;
+  garantirEventoCatalogado(original);
+  const ev = state.eventos.find(e => e.nome === original);
+  if (ev) { ev.nome = novo; ev.data = dataISO ? formatISOToBR(dataISO) : ''; }
+  state.eventos.forEach(e => { if (e.nome === original) { e.nome = novo; e.data = dataISO ? formatISOToBR(dataISO) : e.data; } });
+  (state.vendas||[]).forEach(v => { if ((v.evento||'Sem evento') === original) v.evento = novo; });
+  (state.saidas||[]).forEach(s => { if ((s.evento||'Sem evento') === original) s.evento = novo; });
+  if (state.evento === original) { state.evento = novo; const en=document.getElementById('eventName'); if(en) en.textContent = novo; }
+  await save();
+  document.getElementById('modal-editar-evento').classList.remove('open');
+  renderEventosLista();
+  if (typeof renderRelatorio === 'function') renderRelatorio();
+  toast('Evento atualizado.');
+}
+
+async function excluirEventoAtual() {
+  const nome = document.getElementById('edit-evento-original').value || document.getElementById('edit-evento-nome').value.trim();
+  if (!nome) return;
+  const vendas = (state.vendas || []).filter(v => (v.evento || 'Sem evento') === nome);
+  const saidas = (state.saidas || []).filter(s => (s.evento || 'Sem evento') === nome);
+  const totalRegistros = vendas.length + saidas.length;
+  let msg = `Excluir o evento "${nome}"?`;
+  if (totalRegistros > 0) msg += `\n\nEste evento possui ${vendas.length} venda(s) e ${saidas.length} saída(s). Ao excluir, esses registros também serão apagados e os produtos voltarão ao estoque.`;
+  if (!confirm(msg)) return;
+
+  vendas.forEach(v => {
+    const item = state.estoque.find(i => i.id === v.itemId);
+    if (item) item.quantidade += Number(v.quantidade) || 0;
+  });
+  saidas.forEach(s => {
+    const item = state.estoque.find(i => i.id === s.itemId);
+    if (item) item.quantidade += Number(s.quantidade) || 0;
+  });
+
+  state.vendas = (state.vendas || []).filter(v => (v.evento || 'Sem evento') !== nome);
+  state.saidas = (state.saidas || []).filter(s => (s.evento || 'Sem evento') !== nome);
+  state.eventos = (state.eventos || []).filter(e => e.nome !== nome);
+  if (state.evento === nome) {
+    state.evento = '';
+    const en = document.getElementById('eventName');
+    if (en) en.textContent = 'Sem evento';
+  }
+
+  await save();
+  document.getElementById('modal-editar-evento').classList.remove('open');
+  renderEventosLista();
+  if (typeof renderEstoque === 'function') renderEstoque();
+  if (typeof renderVendas === 'function') renderVendas();
+  if (typeof renderSaidas === 'function') renderSaidas();
+  if (typeof renderRelatorio === 'function') renderRelatorio();
+  toast('Evento excluído.');
+}
+
+// Edição completa de venda: produto, evento, quantidade e preço.
+function itemLabel(i){ return `${i.nome}${i.tamanho?' · '+i.tamanho:''}${i.cor?' · '+i.cor:''}${i.edicao?' · '+i.edicao:''}`; }
+function opcoesProdutosComAtualHTML(itemId) {
+  const ids = new Set();
+  const itens = [];
+  state.estoque.forEach(i => { if ((i.quantidade>0 || i.id===itemId) && !ids.has(i.id)) { ids.add(i.id); itens.push(i); } });
+  return itens.sort((a,b)=>itemLabel(a).localeCompare(itemLabel(b),'pt-BR')).map(i=>`<option value="${i.id}" ${i.id===itemId?'selected':''}>${escapeHtml(itemLabel(i))} (${i.quantidade} un.)</option>`).join('');
+}
+function abrirEditarVenda(id) {
+  const v = state.vendas.find(v => v.id === id);
+  if (!v) return;
+  garantirEventoCatalogado(v.evento || 'Sem evento');
+  document.getElementById('edit-venda-id').value = id;
+  document.getElementById('edit-venda-produto').innerHTML = opcoesProdutosComAtualHTML(v.itemId);
+  document.getElementById('edit-venda-evento').innerHTML = opcoesEventosHTML(v.evento || 'Sem evento');
+  document.getElementById('edit-venda-qty').value = v.quantidade;
+  document.getElementById('edit-venda-preco').value = Number(v.preco||0).toFixed(2);
+  document.getElementById('modal-editar-venda').classList.add('open');
+}
+async function confirmarEditarVenda() {
+  const id = parseInt(document.getElementById('edit-venda-id').value);
+  const venda = state.vendas.find(v => v.id === id);
+  if (!venda) { toast('Venda não encontrada'); return; }
+  const novoItemId = parseInt(document.getElementById('edit-venda-produto').value);
+  const novoItem = state.estoque.find(i => i.id === novoItemId);
+  const oldItem = state.estoque.find(i => i.id === venda.itemId);
+  const qty = parseInt(document.getElementById('edit-venda-qty').value) || 0;
+  const preco = parseFloat(String(document.getElementById('edit-venda-preco').value).replace(',','.')) || 0;
+  const evento = document.getElementById('edit-venda-evento').value || 'Sem evento';
+  if (!novoItem || qty < 1) { toast('Dados inválidos'); return; }
+  if (oldItem) oldItem.quantidade += Number(venda.quantidade)||0;
+  if (qty > novoItem.quantidade) {
+    if (oldItem) oldItem.quantidade -= Number(venda.quantidade)||0;
+    toast(`Estoque insuficiente (${novoItem.quantidade} disponíveis)`); return;
+  }
+  novoItem.quantidade -= qty;
+  const custoUnit = getCusto(novoItem.categoria) || getCusto(novoItem.nome) || 0;
+  Object.assign(venda, {
+    itemId: novoItem.id, nome: novoItem.nome, tamanho: novoItem.tamanho||'', cor: novoItem.cor||'', edicao: novoItem.edicao||'', categoria: novoItem.categoria,
+    quantidade: qty, preco, total: qty*preco, custo: custoUnit, totalCusto: qty*custoUnit, evento
+  });
+  garantirEventoCatalogado(evento);
+  await save();
+  document.getElementById('modal-editar-venda').classList.remove('open');
+  if (typeof renderVendas === 'function') renderVendas();
+  if (typeof renderEstoque === 'function') renderEstoque();
+  if (typeof populateVendaProduto === 'function') populateVendaProduto();
+  const evOpen = document.getElementById('modal-editar-evento');
+  if (evOpen && evOpen.classList.contains('open')) renderEditarEventoItens(document.getElementById('edit-evento-nome').value.trim());
+  toast('Venda atualizada.');
+}
+
+// Edição completa de saída: produto, evento, quantidade, motivo e observação.
+function abrirEditarSaida(id) {
+  const s = (state.saidas||[]).find(s => s.id === id);
+  if (!s) return;
+  garantirEventoCatalogado(s.evento || 'Sem evento');
+  document.getElementById('edit-saida-id').value = id;
+  document.getElementById('edit-saida-produto').innerHTML = opcoesProdutosComAtualHTML(s.itemId);
+  document.getElementById('edit-saida-evento').innerHTML = opcoesEventosHTML(s.evento || 'Sem evento');
+  document.getElementById('edit-saida-qty').value = s.quantidade;
+  document.getElementById('edit-saida-motivo').value = s.motivo || 'Outro';
+  document.getElementById('edit-saida-obs').value = s.obs || '';
+  document.getElementById('modal-editar-saida').classList.add('open');
+}
+async function confirmarEditarSaida() {
+  const id = parseInt(document.getElementById('edit-saida-id').value);
+  const saida = (state.saidas||[]).find(s => s.id === id);
+  if (!saida) { toast('Saída não encontrada'); return; }
+  const novoItemId = parseInt(document.getElementById('edit-saida-produto').value);
+  const novoItem = state.estoque.find(i => i.id === novoItemId);
+  const oldItem = state.estoque.find(i => i.id === saida.itemId);
+  const qty = parseInt(document.getElementById('edit-saida-qty').value) || 0;
+  const evento = document.getElementById('edit-saida-evento').value || 'Sem evento';
+  if (!novoItem || qty < 1) { toast('Dados inválidos'); return; }
+  if (oldItem) oldItem.quantidade += Number(saida.quantidade)||0;
+  if (qty > novoItem.quantidade) {
+    if (oldItem) oldItem.quantidade -= Number(saida.quantidade)||0;
+    toast(`Estoque insuficiente (${novoItem.quantidade} disponíveis)`); return;
+  }
+  novoItem.quantidade -= qty;
+  const custoUnit = getCusto(novoItem.categoria) || getCusto(novoItem.nome) || 0;
+  Object.assign(saida, {
+    itemId: novoItem.id, nome: novoItem.nome, tamanho: novoItem.tamanho||'', cor: novoItem.cor||'', edicao: novoItem.edicao||'', categoria: novoItem.categoria,
+    quantidade: qty, custoUnit, custoTotal: qty*custoUnit,
+    motivo: document.getElementById('edit-saida-motivo').value, obs: document.getElementById('edit-saida-obs').value.trim(), evento
+  });
+  garantirEventoCatalogado(evento);
+  await save();
+  document.getElementById('modal-editar-saida').classList.remove('open');
+  if (typeof renderSaidas === 'function') renderSaidas();
+  if (typeof renderEstoque === 'function') renderEstoque();
+  if (typeof populateSaidaProduto === 'function') populateSaidaProduto();
+  const evOpen = document.getElementById('modal-editar-evento');
+  if (evOpen && evOpen.classList.contains('open')) renderEditarEventoItens(document.getElementById('edit-evento-nome').value.trim());
+  toast('Saída atualizada.');
+}
+async function confirmarExcluirSaidaModal(){
+  const id = parseInt(document.getElementById('edit-saida-id').value);
+  document.getElementById('modal-editar-saida').classList.remove('open');
+  await excluirSaida(id);
+}
+
 </script>
 </body>
 </html>
