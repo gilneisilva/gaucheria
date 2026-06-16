@@ -841,8 +841,8 @@ async function salvarEvento() {
 // ── HELPERS ──
 function itemKey(i) {
   return i.categoria === 'Moeda Colecionável'
-    ? (i.nome+'||'+(i.edicao||'')+'||'+(i.acabamento||'')).toLowerCase()
-    : (i.nome+'||'+(i.tamanho||'')+'||'+(i.cor||'')).toLowerCase();
+    ? ((i.categoria||'')+'||'+i.nome+'||'+(i.edicao||'')+'||'+(i.acabamento||'')).toLowerCase()
+    : ((i.categoria||'')+'||'+i.nome+'||'+(i.tamanho||'')+'||'+(i.cor||'')).toLowerCase();
 }
 function itemMeta(i) {
   if (i.categoria === 'Moeda Colecionável')
