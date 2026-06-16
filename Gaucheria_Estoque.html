@@ -581,6 +581,31 @@ html,body{overflow-x:hidden;max-width:100vw}
   </div>
 </div>
 
+<!-- MODAL EDITAR SAÍDA -->
+<div class="modal-overlay" id="modal-editar-saida">
+  <div class="modal">
+    <h2>✏️ Editar saída</h2>
+    <input type="hidden" id="edit-saida-id">
+    <label>Quantidade</label>
+    <input id="edit-saida-qty" type="number" min="1" value="1">
+    <label>Motivo</label>
+    <select id="edit-saida-motivo">
+      <option value="Sorteio">🎰 Sorteio</option>
+      <option value="Brinde">🎁 Brinde / Presente</option>
+      <option value="Amostra">👕 Amostra / Demonstração</option>
+      <option value="Perda">⚠️ Perda / Avaria</option>
+      <option value="Outro">📝 Outro</option>
+    </select>
+    <label>Observação</label>
+    <input id="edit-saida-obs" type="text" placeholder="Opcional">
+    <div class="modal-btns">
+      <button class="btn btn-primary" style="flex:1" onclick="confirmarEditarSaida()">✔ Salvar</button>
+      <button class="btn btn-danger" style="flex:1" onclick="confirmarExcluirSaidaModal()">🗑 Excluir</button>
+    </div>
+    <button class="btn" style="background:var(--cinza-cl);margin-top:8px;width:100%" onclick="document.getElementById('modal-editar-saida').classList.remove('open')">Cancelar</button>
+  </div>
+</div>
+
 <!-- MODAL EDITAR VENDA -->
 <div class="modal-overlay" id="modal-editar-venda">
   <div class="modal">
@@ -1280,18 +1305,49 @@ function preencherVenda() {
   if (item && item.preco) document.getElementById('venda-preco').value = item.preco.toFixed(2);
 }
 async function registrarVenda() {
-  const id=parseInt(document.getElementById('venda-produto').value);
-  const qty=parseInt(document.getElementById('venda-qty').value)||0;
-  const preco=parseFloat(document.getElementById('venda-preco').value)||0;
-  const item=state.estoque.find(i=>i.id===id);
+  const id    = parseInt(document.getElementById('venda-produto').value);
+  const qty   = parseInt(document.getElementById('venda-qty').value) || 0;
+  const preco = parseFloat(document.getElementById('venda-preco').value) || 0;
+  const item  = state.estoque.find(i => i.id === id);
+
   if (!item) { toast('Selecione um produto'); return; }
-  if (qty<1) { toast('Quantidade inválida'); return; }
-  if (qty>item.quantidade) { toast(`Estoque insuficiente (${item.quantidade} disponíveis)`); return; }
-  item.quantidade-=qty;
-  state.vendas.push({ id:Date.now(), itemId:item.id, nome:item.nome, tamanho:item.tamanho||'', cor:item.cor||'', edicao:item.edicao||'', acabamento:item.acabamento||'', categoria:item.categoria, quantidade:qty, preco, total:qty*preco, hora:new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}), evento:state.evento });
-  await save(); toast(`Venda registrada! R$ ${(qty*preco).toFixed(2)}`);
-  document.getElementById('venda-qty').value='1'; document.getElementById('venda-preco').value=''; document.getElementById('venda-produto').value='';
-  renderVendas(); populateVendaProduto();
+  if (qty < 1) { toast('Quantidade inválida'); return; }
+  if (qty > item.quantidade) { toast(`Estoque insuficiente (${item.quantidade} disponíveis)`); return; }
+
+  // Baixar estoque
+  item.quantidade -= qty;
+
+  // Calcular custo
+  const custoUnit = getCusto(item.nome) || getCusto(item.categoria) || 0;
+
+  state.vendas.push({
+    id: Date.now(),
+    itemId: item.id,
+    nome: item.nome,
+    tamanho: item.tamanho || '',
+    cor: item.cor || '',
+    edicao: item.edicao || '',
+    categoria: item.categoria,
+    quantidade: qty,
+    preco,
+    total: qty * preco,
+    custo: custoUnit,
+    totalCusto: qty * custoUnit,
+    hora: new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'}),
+    evento: state.evento || 'Sem evento'
+  });
+
+  await save();
+  toast(`✅ Venda registrada! R$ ${(qty * preco).toFixed(2)}`);
+
+  // Limpar campos
+  document.getElementById('venda-qty').value = '1';
+  document.getElementById('venda-preco').value = '';
+  document.getElementById('venda-produto').value = '';
+
+  // Atualizar telas
+  renderVendas();
+  renderVendaFiltros();
 }
 function renderVendas() {
   const el = document.getElementById('lista-vendas');
@@ -1482,14 +1538,33 @@ function renderSaidas() {
           ${s.cor?`<span class="tag tag-color">${s.cor}</span> `:''}
           <span class="tag tag-cat">${s.motivo}</span>
           · ${s.hora}
+          <span style="color:var(--cinza)">· 📅 ${s.evento||'Sem evento'}</span>
           ${s.obs?`<br><span style="font-style:italic;color:var(--cinza)">${s.obs}</span>`:''}
         </div>
       </div>
-      <div style="text-align:right;flex-shrink:0">
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">
         <div style="font-weight:700;font-size:14px">${s.quantidade} un.</div>
         ${s.custoTotal>0?`<div style="font-size:11px;color:var(--danger)">R$ ${s.custoTotal.toFixed(2)}</div>`:''}
+        <button onclick="excluirSaida(${s.id})"
+          style="font-size:10px;color:var(--danger);background:none;border:1px solid #FED7D7;border-radius:5px;cursor:pointer;padding:2px 7px;font-weight:600">
+          🗑 Excluir
+        </button>
       </div>
     </div>`).join('')}</div>`;
+}
+
+async function excluirSaida(id) {
+  if (!confirm('Excluir esta saída? O produto voltará ao estoque.')) return;
+  const saida = state.saidas.find(s => s.id === id);
+  if (!saida) return;
+  // Devolver ao estoque
+  const item = state.estoque.find(i => i.id === saida.itemId);
+  if (item) item.quantidade += saida.quantidade;
+  state.saidas = state.saidas.filter(s => s.id !== id);
+  await save();
+  renderSaidas();
+  renderSaidaFiltros();
+  toast('Saída excluída — produto devolvido ao estoque.');
 }
 
 // ── PREÇOS ──
@@ -1662,6 +1737,15 @@ function hashStr(str) {
   // SHA-256 simples via SubtleCrypto
   return crypto.subtle.digest('SHA-256', new TextEncoder().encode(str))
     .then(buf => Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join(''));
+}
+
+function fazerLogout() {
+  if (confirm('Sair do app?')) {
+    sessionStorage.removeItem('gaucheria_auth');
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('login-senha').value = '';
+    setTimeout(() => document.getElementById('login-senha').focus(), 100);
+  }
 }
 
 async function fazerLogin() {
