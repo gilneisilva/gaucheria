@@ -340,6 +340,25 @@ html,body{overflow-x:hidden;max-width:100vw}
   <div class="card">
     <div class="card-title"><span>📋</span> Importar planilha</div>
     <div class="info-box">Colunas: <strong>categoria, nome, tamanho, cor, edicao, acabamento, quantidade, preco</strong></div>
+
+    <label>Modo de importação</label>
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;flex:1;background:var(--fundo);border:2px solid var(--azul);border-radius:8px;padding:10px;font-size:13px;font-weight:600;text-transform:none;letter-spacing:0;color:var(--preto)" id="modo-somar-label">
+        <input type="radio" name="modo-import" id="modo-somar" value="somar" checked onchange="atualizarModoLabel()">
+        <div>
+          <div>➕ Adicionar ao estoque</div>
+          <div style="font-size:11px;font-weight:400;color:var(--cinza);margin-top:2px">Soma as quantidades do CSV ao estoque atual</div>
+        </div>
+      </label>
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;flex:1;background:var(--fundo);border:1.5px solid var(--cinza-cl);border-radius:8px;padding:10px;font-size:13px;font-weight:600;text-transform:none;letter-spacing:0;color:var(--preto)" id="modo-substituir-label">
+        <input type="radio" name="modo-import" id="modo-substituir" value="substituir" onchange="atualizarModoLabel()">
+        <div>
+          <div>🔄 Substituir estoque</div>
+          <div style="font-size:11px;font-weight:400;color:var(--cinza);margin-top:2px">Substitui todo o estoque pelos dados do CSV</div>
+        </div>
+      </label>
+    </div>
+
     <button class="btn btn-outline" style="margin-bottom:10px" onclick="baixarModelo()">⬇ Baixar modelo .csv</button>
     <div class="import-zone" id="import-zone" onclick="document.getElementById('file-input').click()"
          ondragover="event.preventDefault();this.classList.add('drag')"
@@ -906,6 +925,16 @@ function renderEntradaHistorico() {
 }
 
 // ── IMPORTAR ──
+function atualizarModoLabel() {
+  const somar = document.getElementById('modo-somar').checked;
+  document.getElementById('modo-somar-label').style.border = somar ? '2px solid var(--azul)' : '1.5px solid var(--cinza-cl)';
+  document.getElementById('modo-substituir-label').style.border = !somar ? '2px solid var(--azul)' : '1.5px solid var(--cinza-cl)';
+}
+
+function getModoImport() {
+  return document.getElementById('modo-substituir')?.checked ? 'substituir' : 'somar';
+}
+
 function baixarModelo() {
   const csv = 'categoria,nome,tamanho,cor,edicao,acabamento,quantidade,preco\nCamiseta,Gaucheria Clássica,M,Preto,,,10,102.90\nCamiseta,Gaucheria Clássica,G,Preto,,,8,102.90\nMoeda Colecionável,Moeda Lobisquera,,,1ª Edição,Dourado,20,49.90\n';
   const a = document.createElement('a');
@@ -980,21 +1009,35 @@ function parseCSV(text) {
 async function confirmarImport() {
   const validos = importPreview.filter(r => !r.erro);
   if (!validos.length) { toast('Nenhuma linha válida'); return; }
-  
+
+  const modo = getModoImport();
+
+  if (modo === 'substituir') {
+    if (!confirm(`⚠️ Substituir TODO o estoque atual por ${validos.length} produto(s) do CSV?\nAs vendas e saídas serão mantidas.`)) return;
+  }
+
   toast('⏳ Importando...', 1000);
-  validos.forEach(r => adicionarOuSomar(r));
-  
-  console.log('Estoque após import:', state.estoque.length, 'itens');
-  
-  // Salvar com feedback visual
+
+  if (modo === 'substituir') {
+    // Substituir estoque completamente
+    state.estoque = [];
+    state.nextId  = 1;
+    validos.forEach(r => {
+      state.estoque.push({ id: state.nextId++, ...r, dataEntrada: new Date().toLocaleDateString('pt-BR') });
+    });
+    toast(`🔄 Estoque substituído com ${validos.length} produto(s)!`, 3000);
+  } else {
+    // Somar ao estoque existente
+    validos.forEach(r => adicionarOuSomar(r));
+    toast(`✅ ${validos.length} produto(s) adicionado(s) ao estoque!`, 3000);
+  }
+
   try {
     await save();
-    console.log('Save concluído com sucesso');
     renderEntradaHistorico();
     document.getElementById('import-preview').style.display = 'none';
     document.getElementById('file-input').value = '';
     importPreview = [];
-    toast(`✅ ${validos.length} produto(s) importado(s) e sincronizados!`, 3000);
     showTab('estoque');
   } catch(e) {
     console.error('Erro ao salvar:', e);
